@@ -17,3 +17,10 @@ allprojects {
         jcenter()
     }
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.9"
+	
+	// Descarga la version con el codigo fuente
+    distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}  
