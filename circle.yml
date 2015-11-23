@@ -1,0 +1,10 @@
+dependencies: 
+  pre: 
+    - chmod +x gradlew
+test: 
+  override: 
+    - ./gradlew build
+    # copy the build outputs to artifacts
+    - cp -r ./app/build/outputs $CIRCLE_ARTIFACTS
+    # copy the test results to the test results directory.
+    - cp -r ./app/build/reports/tests/* $CIRCLE_TEST_REPORTS
