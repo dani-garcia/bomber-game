@@ -1,10 +1,15 @@
 package com.bombergame.graficos;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
+
+import com.bombergame.gestores.CargadorGraficos;
 
 public class Sprite {
     private Bitmap bitmap;
@@ -28,8 +33,11 @@ public class Sprite {
     private int modeloAncho;
     private int modeloAltura;
 
-
     private boolean bucle;
+
+    public static Sprite create(Context context, @DrawableRes int id, int ancho, int alto, int fps, int frames, boolean bucle) {
+        return new Sprite(CargadorGraficos.cargarDrawable(context, id), ancho, alto, fps, frames, true);
+    }
 
     public Sprite(Drawable drawable, int modeloAncho, int modeloAltura, int fps, int framesTotales, boolean bucle) {
         this.bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -72,10 +80,15 @@ public class Sprite {
     }
 
 
-    public void dibujarSprite(Canvas canvas, int x, int y) {
+    public void dibujarSprite(Canvas canvas, int x, int y, boolean alpha) {
         Rect destRect = new Rect(x - modeloAncho / 2, y - modeloAltura / 2, x
                 + modeloAncho / 2, y + modeloAltura / 2);
-        canvas.drawBitmap(bitmap, rectanguloDibujo, destRect, null);
+
+        Paint paint = new Paint();
+        if (alpha)
+            paint.setAlpha(150);
+
+        canvas.drawBitmap(bitmap, rectanguloDibujo, destRect, paint);
     }
 
     public void setFrameActual(int frameActual) {

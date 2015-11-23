@@ -8,6 +8,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.bombergame.modelos.Nivel;
+import com.bombergame.modelos.controles.BotonBomba;
+import com.bombergame.modelos.controles.Pad;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -20,7 +22,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public static int pantallaAlto;
 
     private Nivel nivel;
-    public int numeroNivel = 0;
+    public int numeroNivel;
+
+    private Pad pad;
+    private BotonBomba botonBomba;
 
     public GameView(Context context) {
         super(context);
@@ -34,6 +39,53 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         gameloop.setRunning(true);
     }
 
+    protected void inicializar() throws Exception {
+        nivel = new Nivel(context, numeroNivel);
+
+        pad = new Pad(context);
+        botonBomba = new BotonBomba(context);
+    }
+
+    public void actualizar(long tiempo) throws Exception {
+        nivel.actualizar(tiempo);
+    }
+
+    protected void dibujar(Canvas canvas) {
+        nivel.dibujar(canvas);
+        pad.dibujar(canvas);
+        botonBomba.dibujar(canvas);
+    }
+
+
+    public void procesarEventosTouch() {
+        boolean pulsacionPadMover = false;
+        for (int i = 0; i < 6; i++) {
+            if (accion[i] != NO_ACTION) {
+                if (accion[i] == ACTION_DOWN && nivel.nivelPausado) {
+                    nivel.nivelPausado = false;
+                }
+
+                if (pad.estaPulsado(x[i], y[i])) {
+                    // Si almenosuna pulsacion está en el pad
+                    if (accion[i] != ACTION_UP) {
+                        pulsacionPadMover = true;
+                        nivel.orientacionPadX = pad.getOrientacionX(x[i]);
+                        nivel.orientacionPadY = pad.getOrientacionY(y[i]);
+                    }
+                }
+
+                if (botonBomba.estaPulsado(x[i], y[i])) {
+                    if (accion[i] == ACTION_DOWN) {
+                        nivel.botonBombaPulsado = true;
+                    }
+                }
+            }
+        }
+        if (!pulsacionPadMover) {
+            nivel.orientacionPadX = 0;
+            nivel.orientacionPadY = 0;
+        }
+    }
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
@@ -81,24 +133,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     float x[] = new float[6];
     float y[] = new float[6];
 
-    public void procesarEventosTouch() {
 
-    }
-
-    protected void inicializar() throws Exception {
-        nivel = new Nivel(context, numeroNivel);
-    }
-
-    public void actualizar(long tiempo) throws Exception {
-        nivel.actualizar(tiempo);
-    }
-
-    protected void dibujar(Canvas canvas) {
-        nivel.dibujar(canvas);
-    }
-
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         pantallaAncho = width;
         pantallaAlto = height;
     }
@@ -134,6 +170,5 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
-
 }
 
