@@ -13,11 +13,15 @@ import com.bombergame.controlesJugador.MoverJugadorAbajo;
 import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.controlesJugador.MoverJugadorDerecha;
 import com.bombergame.controlesJugador.MoverJugadorIzquierda;
+import com.bombergame.gestores.GestorNiveles;
+import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Nivel;
+import com.bombergame.modelos.Tile;
 import com.bombergame.modelos.controles.BotonBomba;
 import com.bombergame.modelos.controles.Pad;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -51,16 +55,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void inicializar() throws Exception {
-        nivel = new Nivel(context, numeroNivel);
+        GestorNiveles.getInstancia().cargarDatosNivel(context);
+        Tile[][] mapaTiles = GestorNiveles.getInstancia().getMapaTiles();
+        List<Jugador> jugadores = GestorNiveles.getInstancia().getJugadores();
+        nivel = new Nivel(context, numeroNivel, mapaTiles, jugadores);
 
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);
 
         controladores = new HashMap<>();
-        controladores.put(KeyEvent.KEYCODE_W, new MoverJugadorArriba(nivel.getJugador()));
-        controladores.put(KeyEvent.KEYCODE_S, new MoverJugadorAbajo(nivel.getJugador()));
-        controladores.put(KeyEvent.KEYCODE_A, new MoverJugadorIzquierda(nivel.getJugador()));
-        controladores.put(KeyEvent.KEYCODE_D, new MoverJugadorDerecha(nivel.getJugador()));
+        controladores.put(KeyEvent.KEYCODE_W, new MoverJugadorArriba(nivel.getJugadores().get(0)));
+        controladores.put(KeyEvent.KEYCODE_S, new MoverJugadorAbajo(nivel.getJugadores().get(0)));
+        controladores.put(KeyEvent.KEYCODE_A, new MoverJugadorIzquierda(nivel.getJugadores().get(0)));
+        controladores.put(KeyEvent.KEYCODE_D, new MoverJugadorDerecha(nivel.getJugadores().get(0)));
+
+
+        if (nivel.getJugadores().size()>1) {
+            controladores.put(KeyEvent.KEYCODE_DPAD_UP, new MoverJugadorArriba(nivel.getJugadores().get(1)));
+            controladores.put(KeyEvent.KEYCODE_DPAD_DOWN, new MoverJugadorAbajo(nivel.getJugadores().get(1)));
+            controladores.put(KeyEvent.KEYCODE_DPAD_LEFT, new MoverJugadorIzquierda(nivel.getJugadores().get(1)));
+            controladores.put(KeyEvent.KEYCODE_DPAD_RIGHT, new MoverJugadorDerecha(nivel.getJugadores().get(1)));
+        }
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -90,15 +105,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         int orientacionPadY = pad.getOrientacionY(y[i]);
                         if (Math.abs(orientacionPadX) >= Math.abs(orientacionPadY)) {
                             if (orientacionPadX > 0) {
-                                nivel.getJugador().ordenMovimientoDerecha();
+                                nivel.getJugadorTactil().ordenMovimientoDerecha();
                             } else if (orientacionPadX < 0) {
-                                nivel.getJugador().ordenMovimientoIzquierda();
+                                nivel.getJugadorTactil().ordenMovimientoIzquierda();
                             }
                         } else {
                             if (orientacionPadY > 0) {
-                                nivel.getJugador().ordenMovimientoAbajo();
+                                nivel.getJugadorTactil().ordenMovimientoAbajo();
                             } else if (orientacionPadY < 0) {
-                                nivel.getJugador().ordenMovimientoArriba();
+                                nivel.getJugadorTactil().ordenMovimientoArriba();
                             }
                         }
                     }
@@ -112,10 +127,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         if (!pulsacionPadMover) {
-            nivel.getJugador().ordenFinMovimientoDerecha();
-            nivel.getJugador().ordenFinMovimientoIzquierda();
-            nivel.getJugador().ordenFinMovimientoAbajo();
-            nivel.getJugador().ordenFinMovimientoArriba();
+            nivel.getJugadorTactil().ordenFinMovimientoDerecha();
+            nivel.getJugadorTactil().ordenFinMovimientoIzquierda();
+            nivel.getJugadorTactil().ordenFinMovimientoAbajo();
+            nivel.getJugadorTactil().ordenFinMovimientoArriba();
         }
     }
 

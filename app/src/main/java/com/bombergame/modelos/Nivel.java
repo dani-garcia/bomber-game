@@ -10,6 +10,7 @@ import com.bombergame.R;
 import com.bombergame.controlesJugador.ControladorJugaror;
 import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.gestores.CargadorGraficos;
+import com.bombergame.gestores.GestorNiveles;
 import com.bombergame.graficos.Ar;
 
 import java.io.BufferedReader;
@@ -29,30 +30,35 @@ public class Nivel {
 
     public boolean nivelPausado = false;
 
-    public Jugador getJugador() {
-        return jugador;
+    public List<Jugador> getJugadores() {
+        return jugadores;
     }
 
-    private Jugador jugador;
+    public Jugador getJugadorTactil() {
+        return jugadores.get(1);
+    }
 
-    public Nivel(Context context, int numeroNivel) throws Exception {
+    private List<Jugador> jugadores;
+
+    public Nivel(Context context, int numeroNivel, Tile[][] mapaTiles, List<Jugador> jugadores) throws Exception {
         inicializado = false;
 
         this.context = context;
         this.numeroNivel = numeroNivel;
+        this.mapaTiles = mapaTiles;
+        this.jugadores = jugadores;
         inicializar();
         inicializado = true;
     }
 
     public void inicializar() throws Exception {
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
-
         // Inicializamos los tiles
-        inicializarMapaTiles();
+        //inicializarMapaTiles();
 
     }
 
-    private void inicializarMapaTiles() {
+    /*private void inicializarMapaTiles() {
         try {
             int anchoLinea;
             List<String> lineas = new ArrayList<>();
@@ -108,19 +114,20 @@ public class Nivel {
                 //cualquier otro caso
                 return Tile.VACIO;
         }
-    }
+    }*/
 
 
     public void actualizar(long tiempo) {
         if (inicializado) {
-            jugador.procesarOrdenes();
+            for (Jugador jugador : jugadores) {
+                jugador.procesarOrdenes();
 
-            // TODO Poner bomba
-            // bomba = jugador.ponerBomba():
-            // comprobar null
+                // TODO Poner bomba
+                // bomba = jugador.ponerBomba():
+                // comprobar null
 
-
-            jugador.actualizar(tiempo);
+                jugador.actualizar(tiempo);
+            }
             aplicarReglasMovimiento();
         }
     }
@@ -135,41 +142,44 @@ public class Nivel {
 
     private void aplicarReglasMovimiento() {
         // Jugador
-        if (jugador.movimiento) {
-            if (jugador.aMover > 0) {
-                int tileX = getTileXFromCoord(jugador.x);
-                int tileY = getTileYFromCoord(jugador.y) + 1;
+        for (Jugador jugador : jugadores) {
 
-                // Nos movemos con la velocidad
-                double paso = Math.min(jugador.aMover, jugador.velocidadMovimiento);
-                jugador.aMover -= paso;
+            if (jugador.movimiento) {
+                if (jugador.aMover > 0) {
+                    int tileX = getTileXFromCoord(jugador.x);
+                    int tileY = getTileYFromCoord(jugador.y) + 1;
 
-                switch (jugador.orientacion) {
-                    case Jugador.ARRIBA:
-                        if (mapaTiles[tileX][tileY - 1].tipoColision == Tile.PASABLE)
-                            jugador.y -= paso;
-                        break;
-                    case Jugador.ABAJO:
-                        if (mapaTiles[tileX][tileY + 1].tipoColision == Tile.PASABLE)
-                            jugador.y += paso;
-                        break;
-                    case Jugador.IZQUIERDA:
-                        if (mapaTiles[tileX - 1][tileY].tipoColision == Tile.PASABLE)
-                            jugador.x -= paso;
-                        break;
-                    case Jugador.DERECHA:
-                        if (mapaTiles[tileX + 1][tileY].tipoColision == Tile.PASABLE)
-                            jugador.x += paso;
-                        break;
+                    // Nos movemos con la velocidad
+                    double paso = Math.min(jugador.aMover, jugador.velocidadMovimiento);
+                    jugador.aMover -= paso;
+
+                    switch (jugador.orientacion) {
+                        case Jugador.ARRIBA:
+                            if (mapaTiles[tileX][tileY - 1].tipoColision == Tile.PASABLE)
+                                jugador.y -= paso;
+                            break;
+                        case Jugador.ABAJO:
+                            if (mapaTiles[tileX][tileY + 1].tipoColision == Tile.PASABLE)
+                                jugador.y += paso;
+                            break;
+                        case Jugador.IZQUIERDA:
+                            if (mapaTiles[tileX - 1][tileY].tipoColision == Tile.PASABLE)
+                                jugador.x -= paso;
+                            break;
+                        case Jugador.DERECHA:
+                            if (mapaTiles[tileX + 1][tileY].tipoColision == Tile.PASABLE)
+                                jugador.x += paso;
+                            break;
+                    }
+
+                    // Se acabo el movimiento
+                } else {
+                    jugador.movimiento = false;
+
+                    // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
+                    jugador.x = Ar.x(getTileXFromCoord(jugador.x) * Tile.ancho + Tile.ancho / 2);
+                    jugador.y = Ar.y(getTileYFromCoord(jugador.y) * Tile.altura + Tile.altura);
                 }
-
-                // Se acabo el movimiento
-            } else {
-                jugador.movimiento = false;
-
-                // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
-                jugador.x = Ar.x(getTileXFromCoord(jugador.x) * Tile.ancho + Tile.ancho / 2);
-                jugador.y = Ar.y(getTileYFromCoord(jugador.y) * Tile.altura + Tile.altura);
             }
         }
     }
@@ -181,7 +191,9 @@ public class Nivel {
 
             dibujarTiles(canvas);
 
-            jugador.dibujar(canvas);
+            for (Jugador jugador : jugadores) {
+                jugador.dibujar(canvas);
+            }
 
             // Lo demas
         }

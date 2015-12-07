@@ -11,6 +11,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
+import com.bombergame.gestores.GestorNiveles;
+
 public class MultiPlayerActivity extends Activity {
 
     @Override
@@ -26,9 +28,39 @@ public class MultiPlayerActivity extends Activity {
 
 
         // Recuperamos el control a partir de su ID
-        ImageButton botonNuevoJuego = (ImageButton) findViewById(R.id.imageButton5);
-        botonNuevoJuego.setOnClickListener(new View.OnClickListener() {
+        ImageButton botonDosJugadores = (ImageButton) findViewById(R.id.imageButton5);
+        botonDosJugadores.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // Seleccionar número de jugadores
+                GestorNiveles.getInstancia().setNumeroJugadores(2);
+                // Abrir una nueva actividad desde otra
+                Intent actividadJuego = new Intent(MultiPlayerActivity.this, MainActivity.class);
+                startActivity(actividadJuego);
+                // Cerrar la actividad actual
+                finish();
+            }
+        });
+
+        // Recuperamos el control a partir de su ID
+        ImageButton botonTresJugadores = (ImageButton) findViewById(R.id.imageButton6);
+        botonTresJugadores.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Seleccionar número de jugadores
+                GestorNiveles.getInstancia().setNumeroJugadores(3);
+                // Abrir una nueva actividad desde otra
+                Intent actividadJuego = new Intent(MultiPlayerActivity.this, MainActivity.class);
+                startActivity(actividadJuego);
+                // Cerrar la actividad actual
+                finish();
+            }
+        });
+
+        // Recuperamos el control a partir de su ID
+        ImageButton botonCuatroJugadores = (ImageButton) findViewById(R.id.imageButton7);
+        botonCuatroJugadores.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Seleccionar número de jugadores
+                GestorNiveles.getInstancia().setNumeroJugadores(4);
                 // Abrir una nueva actividad desde otra
                 Intent actividadJuego = new Intent(MultiPlayerActivity.this, MainActivity.class);
                 startActivity(actividadJuego);

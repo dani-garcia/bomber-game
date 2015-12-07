@@ -13,26 +13,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageButton5"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/nivel_1" />
+        android:background="@drawable/nivel_2" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton6"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/nivel_2" />
+        android:background="@drawable/nivel_3" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton7"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/nivel_3" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageButton8"
-        android:layout_gravity="center_horizontal"
         android:background="@drawable/nivel_4" />
+
 </LinearLayout>

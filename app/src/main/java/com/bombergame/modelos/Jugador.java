@@ -64,7 +64,7 @@ public class Jugador extends Modelo {
         cArriba = Ar.alto(-5);
         cAbajo = Ar.alto(45);
 
-        orientacion = DERECHA;
+        orientacion = ABAJO;
 //        vidas = 3;
 
         bombasLimite = 1;
@@ -85,7 +85,7 @@ public class Jugador extends Modelo {
         sprites.put(CAMINANDO_ABAJO, Sprite.create(context, R.drawable.bman_down, ancho, altura, 12, 8, true));
 
         // animación actual
-        sprite = sprites.get(CAMINANDO_DERECHA);
+        sprite = sprites.get(CAMINANDO_ABAJO);
     }
 
     public void procesarOrdenes() {
