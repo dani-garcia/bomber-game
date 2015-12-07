@@ -2,9 +2,13 @@ package com.bombergame.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.inputmethodservice.Keyboard;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.bombergame.R;
+import com.bombergame.controlesJugador.ControladorJugaror;
+import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
 
@@ -13,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Nivel {
     private Context context = null;
@@ -23,9 +28,10 @@ public class Nivel {
     public boolean inicializado;
 
     public boolean nivelPausado = false;
-    public float orientacionPadX;
-    public float orientacionPadY;
-    public boolean botonBombaPulsado;
+
+    public Jugador getJugador() {
+        return jugador;
+    }
 
     private Jugador jugador;
 
@@ -35,7 +41,6 @@ public class Nivel {
         this.context = context;
         this.numeroNivel = numeroNivel;
         inicializar();
-
         inicializado = true;
     }
 
@@ -44,6 +49,7 @@ public class Nivel {
 
         // Inicializamos los tiles
         inicializarMapaTiles();
+
     }
 
     private void inicializarMapaTiles() {
@@ -107,16 +113,14 @@ public class Nivel {
 
     public void actualizar(long tiempo) {
         if (inicializado) {
-            jugador.procesarOrdenes(orientacionPadX, orientacionPadY, botonBombaPulsado);
+            jugador.procesarOrdenes();
 
-            if (botonBombaPulsado) {
-                botonBombaPulsado = false;
+            // TODO Poner bomba
+            // bomba = jugador.ponerBomba():
+            // comprobar null
 
-                // TODO Poner bomba
-            }
 
             jugador.actualizar(tiempo);
-
             aplicarReglasMovimiento();
         }
     }
