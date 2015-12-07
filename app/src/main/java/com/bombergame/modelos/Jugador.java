@@ -32,24 +32,9 @@ public class Jugador extends Modelo {
     public double aMover;
     public boolean movimiento;
 
-    public int bombasLimite;
-    public int bombasColocadas;
-    public int velocidad;
-    public int alcanceBombas;
-    public boolean patearBombas;
-    public boolean explosionRemota;
-
-    private boolean moverArriba;
-    private boolean moverAbajo;
-    private boolean moverIzquierda;
-    private boolean moverDerecha;
-    private boolean ponerBomba;
-    public boolean patearBomba;
-    public boolean explotarBombas;
-
-//    public int vidas;
-//    public double msInmunidad = 0;
-//    public boolean golpeado = false;
+    public int vidas;
+    public double msInmunidad = 0;
+    public boolean golpeado = false;
 
     public Jugador(Context context, double xInicial, double yInicial) {
         super(context, 0, 0, Ar.ancho(115), Ar.alto(62));
@@ -65,14 +50,7 @@ public class Jugador extends Modelo {
         cAbajo = Ar.alto(45);
 
         orientacion = DERECHA;
-//        vidas = 3;
-
-        bombasLimite = 1;
-        bombasColocadas = 0;
-        velocidad = 1;
-        alcanceBombas = 1;
-        patearBombas = false;
-        explosionRemota = false;
+        vidas = 3;
 
         inicializar();
     }
@@ -88,31 +66,12 @@ public class Jugador extends Modelo {
         sprite = sprites.get(CAMINANDO_DERECHA);
     }
 
-    public void procesarOrdenes() {
-        // Si no nos estamos moviendo, y nos envian un movimiento, nos movemos
-        if (!movimiento) {
-            if (moverAbajo) {
-                movimiento = true;
-                aMover = Ar.alto(Tile.altura);
-                sprite =sprites.get(CAMINANDO_ABAJO);
-                orientacion = ABAJO;
-            }else if (moverArriba){
-                movimiento = true;
-                aMover = Ar.alto(Tile.altura);
-                sprite =sprites.get(CAMINANDO_ARRIBA);
-                orientacion = ARRIBA;
-            } else if (moverDerecha) {
-                movimiento = true;
-                aMover = Ar.ancho(Tile.ancho);
-                sprite =sprites.get(CAMINANDO_DERECHA);
-                orientacion = DERECHA;
-            } else if (moverIzquierda) {
-                movimiento = true;
-                aMover = Ar.ancho(Tile.ancho);
-                sprite =sprites.get(CAMINANDO_IZQUIERDA);
-                orientacion = IZQUIERDA;
-            }
-            /*// Solo nos movemos en un eje, asi que cojemos el que tenga un valor mayor
+    public void procesarOrdenes(float orientacionPadX, float orientacionPadY, boolean bomba) {
+        // Si no  nos estamos moviendo, y nos envian un movimiento, nos movemos
+        if (!movimiento && (orientacionPadX != 0 || orientacionPadY != 0)) {
+            movimiento = true;
+
+            // Solo nos movemos en un eje, asi que cojemos el que tenga un valor mayor
             if (Math.abs(orientacionPadX) > Math.abs(orientacionPadY)) {
                 aMover = Ar.ancho(Tile.ancho);
 
@@ -133,94 +92,44 @@ public class Jugador extends Modelo {
                     sprite = sprites.get(CAMINANDO_ARRIBA);
                     orientacion = ARRIBA;
                 }
-            }*/
+            }
         }
     }
 
     @Override
     public void actualizar(long tiempo) {
-//        if (msInmunidad > 0) {
-//            msInmunidad -= tiempo;
-//        }
+        if (msInmunidad > 0) {
+            msInmunidad -= tiempo;
+        }
 
         if (movimiento)
             sprite.actualizar(tiempo);
     }
 
     public int golpeado() {
-//        if (msInmunidad <= 0) {
-//            if (vidas > 0) {
-//                vidas--;
-//                msInmunidad = 3000;
-//                golpeado = true;
-//            }
-//        }
-//        return vidas;
-        return 0;
+        if (msInmunidad <= 0) {
+            if (vidas > 0) {
+                vidas--;
+                msInmunidad = 3000;
+                golpeado = true;
+            }
+        }
+        return vidas;
     }
 
     @Override
     protected void doDibujar(Canvas canvas) {
-//        sprite.dibujarSprite(canvas, (int) x, (int) y, msInmunidad > 0);
-        sprite.dibujarSprite(canvas, (int) x, (int) y, false);
+        sprite.dibujarSprite(canvas, (int) x, (int) y, msInmunidad > 0);
     }
 
     public void restablecerPosicionInicial() {
         this.x = xInicial;
         this.y = yInicial;
 
-//        vidas = 3;
-//        golpeado = false;
-//        msInmunidad = 0;
+        vidas = 3;
+        golpeado = false;
+        msInmunidad = 0;
 
         sprite = sprites.get(CAMINANDO_DERECHA);
-    }
-
-    public void ordenMovimientoAbajo() {
-        moverAbajo = true;
-        moverArriba = false;
-        moverDerecha = false;
-        moverIzquierda = false;
-    }
-    public void ordenFinMovimientoAbajo() {
-        moverAbajo = false;
-    }
-
-    public void ordenMovimientoArriba() {
-        moverAbajo = false;
-        moverArriba = true;
-        moverDerecha = false;
-        moverIzquierda = false;
-    }
-    public void ordenFinMovimientoArriba() {
-        moverArriba = false;
-    }
-
-    public void ordenMovimientoDerecha() {
-        moverAbajo = false;
-        moverArriba = false;
-        moverDerecha = true;
-        moverIzquierda = false;
-
-    }
-    public void ordenFinMovimientoDerecha() {
-        moverDerecha = false;
-    }
-
-    public void ordenMovimientoIzquierda() {
-        moverAbajo = false;
-        moverArriba = false;
-        moverDerecha = false;
-        moverIzquierda = true;
-    }
-    public void ordenFinMovimientoIzquierda() {
-        moverIzquierda = false;
-    }
-
-    public void ordenPonerBomba() {
-        ponerBomba = true;
-    }
-    public void ordenFinPonerBomba() {
-        ponerBomba = false;
     }
 }

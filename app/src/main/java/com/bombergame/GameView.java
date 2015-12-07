@@ -3,22 +3,13 @@ package com.bombergame;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.bombergame.controlesJugador.ControladorJugaror;
-import com.bombergame.controlesJugador.MoverJugadorAbajo;
-import com.bombergame.controlesJugador.MoverJugadorArriba;
-import com.bombergame.controlesJugador.MoverJugadorDerecha;
-import com.bombergame.controlesJugador.MoverJugadorIzquierda;
 import com.bombergame.modelos.Nivel;
 import com.bombergame.modelos.controles.BotonBomba;
 import com.bombergame.modelos.controles.Pad;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -35,8 +26,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Pad pad;
     private BotonBomba botonBomba;
-
-    private Map<Integer, ControladorJugaror> controladores;
 
     public GameView(Context context) {
         super(context);
@@ -55,12 +44,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);
-
-        controladores = new HashMap<>();
-        controladores.put(KeyEvent.KEYCODE_W, new MoverJugadorArriba(nivel.getJugador()));
-        controladores.put(KeyEvent.KEYCODE_S, new MoverJugadorAbajo(nivel.getJugador()));
-        controladores.put(KeyEvent.KEYCODE_A, new MoverJugadorIzquierda(nivel.getJugador()));
-        controladores.put(KeyEvent.KEYCODE_D, new MoverJugadorDerecha(nivel.getJugador()));
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -86,36 +69,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     // Si almenosuna pulsacion está en el pad
                     if (accion[i] != ACTION_UP) {
                         pulsacionPadMover = true;
-                        int orientacionPadX = pad.getOrientacionX(x[i]);
-                        int orientacionPadY = pad.getOrientacionY(y[i]);
-                        if (Math.abs(orientacionPadX) >= Math.abs(orientacionPadY)) {
-                            if (orientacionPadX > 0) {
-                                nivel.getJugador().ordenMovimientoDerecha();
-                            } else if (orientacionPadX < 0) {
-                                nivel.getJugador().ordenMovimientoIzquierda();
-                            }
-                        } else {
-                            if (orientacionPadY > 0) {
-                                nivel.getJugador().ordenMovimientoAbajo();
-                            } else if (orientacionPadY < 0) {
-                                nivel.getJugador().ordenMovimientoArriba();
-                            }
-                        }
+                        nivel.orientacionPadX = pad.getOrientacionX(x[i]);
+                        nivel.orientacionPadY = pad.getOrientacionY(y[i]);
                     }
                 }
 
                 if (botonBomba.estaPulsado(x[i], y[i])) {
                     if (accion[i] == ACTION_DOWN) {
-                        // TODO
+                        nivel.botonBombaPulsado = true;
                     }
                 }
             }
         }
         if (!pulsacionPadMover) {
-            nivel.getJugador().ordenFinMovimientoDerecha();
-            nivel.getJugador().ordenFinMovimientoIzquierda();
-            nivel.getJugador().ordenFinMovimientoAbajo();
-            nivel.getJugador().ordenFinMovimientoArriba();
+            nivel.orientacionPadX = 0;
+            nivel.orientacionPadY = 0;
         }
     }
 
@@ -201,22 +169,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             } catch (InterruptedException e) {
             }
         }
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        ControladorJugaror accion = controladores.get(keyCode);
-        if (accion != null)
-            accion.keyUp();
-        return super.onKeyUp(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        ControladorJugaror accion = controladores.get(keyCode);
-        if (accion != null)
-            accion.keyDown();
-        return super.onKeyUp(keyCode, event);
     }
 }
 
