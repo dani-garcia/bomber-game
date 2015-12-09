@@ -87,11 +87,11 @@ public class Jugador extends Modelo {
     }
 
     private void inicializar() {
-        sprites.put(CAMINANDO_DERECHA, Sprite.create(context, R.drawable.bman_right, ancho, altura, 12, 8, true));
-        sprites.put(CAMINANDO_IZQUIERDA, Sprite.create(context, R.drawable.bman_left, ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_DERECHA, Sprite.create(context, R.drawable.bman_right1 + (idJugador-1), ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_IZQUIERDA, Sprite.create(context, R.drawable.bman_left1 + (idJugador-1), ancho, altura, 12, 8, true));
 
-        sprites.put(CAMINANDO_ARRIBA, Sprite.create(context, R.drawable.bman_up, ancho, altura, 12, 8, true));
-        sprites.put(CAMINANDO_ABAJO, Sprite.create(context, R.drawable.bman_down, ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_ARRIBA, Sprite.create(context, R.drawable.bman_up1 + (idJugador-1), ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_ABAJO, Sprite.create(context, R.drawable.bman_down1 + (idJugador-1), ancho, altura, 12, 8, true));
 
         // animación actual
         sprite = sprites.get(CAMINANDO_ABAJO);
