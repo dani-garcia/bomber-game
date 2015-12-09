@@ -127,6 +127,16 @@ public class Nivel {
                 jugador.procesarOrdenes();
                 jugador.actualizar(tiempo);
             }
+
+            Bomba bombaEliminar = null;
+            for(Bomba b:bombas){
+                if(b.estado == b.EXPLOSION_REALIZADA)
+                    bombaEliminar = b;
+                else
+                    b.actualizar(tiempo);
+            }
+
+            bombas.remove(bombaEliminar);
             aplicarReglasMovimiento();
         }
     }
@@ -194,11 +204,8 @@ public class Nivel {
                 jugador.dibujar(canvas);
             }
 
-            System.out.println(bombas.size());
             for(Bomba b:bombas) {
-
-                if (b.estado == b.PUESTA)
-                    b.dibujar(canvas);
+                b.dibujar(canvas);
             }
 
             // Lo demas

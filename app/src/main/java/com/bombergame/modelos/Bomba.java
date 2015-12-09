@@ -20,6 +20,7 @@ public class Bomba extends Modelo{
     double y;
     Jugador jugador;
 
+    public static int EXPLOSION_REALIZADA = 2;
     public static int EXPLOTADA = 1;
     public static int PUESTA = 0;
     public int estado;
@@ -34,15 +35,21 @@ public class Bomba extends Modelo{
         this.y = jugador.getY() + 35;
         this.jugador = jugador;
         estado = PUESTA;
-        sprite = Sprite.create(context, R.drawable.bomb, ancho, altura, 6, 3, true);
+        sprite = Sprite.create(context, R.drawable.bomb, ancho, altura, 1, 3, true);
         tiempoPuesta = System.currentTimeMillis();
+        jugador.bombasColocadas++;
     }
 
     @Override
     public void actualizar(long tiempo) {
         sprite.actualizar(tiempo);
-        if(estado == PUESTA && System.currentTimeMillis() - tiempo >=3000) {
+        if(estado == PUESTA && System.currentTimeMillis() - tiempoPuesta >=3000) {
             explotar();
+            tiempoPuesta = System.currentTimeMillis();
+        }
+        else if(estado == EXPLOTADA && System.currentTimeMillis() - tiempoPuesta >=3000){
+            estado = EXPLOSION_REALIZADA;
+            jugador.bombasColocadas--;
         }
     }
 

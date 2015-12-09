@@ -129,9 +129,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (botonBomba.estaPulsado(x[i], y[i])) {
                     if (accion[i] == ACTION_DOWN) {
                         // TODO
+
                         Jugador jugador = nivel.getJugadorTactil();
-                        Bomba b = new Bomba(context, jugador);
-                        nivel.bombas.add(b);
+                        if (jugador.bombasColocadas < jugador.bombasLimite) {
+                            Bomba b = new Bomba(context, jugador);
+                            nivel.bombas.add(b);
+                        }
+
                     }
                 }
             }
