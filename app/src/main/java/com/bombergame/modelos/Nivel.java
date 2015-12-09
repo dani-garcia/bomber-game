@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ public class Nivel {
     public boolean inicializado;
 
     public boolean nivelPausado = false;
+
+    public List<Bomba> bombas;
 
     public List<Jugador> getJugadores() {
         return jugadores;
@@ -53,6 +56,7 @@ public class Nivel {
 
     public void inicializar() throws Exception {
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
+        bombas = new LinkedList<>();
         // Inicializamos los tiles
         //inicializarMapaTiles();
 
@@ -121,11 +125,6 @@ public class Nivel {
         if (inicializado) {
             for (Jugador jugador : jugadores) {
                 jugador.procesarOrdenes();
-
-                // TODO Poner bomba
-                // bomba = jugador.ponerBomba():
-                // comprobar null
-
                 jugador.actualizar(tiempo);
             }
             aplicarReglasMovimiento();
@@ -193,6 +192,13 @@ public class Nivel {
 
             for (Jugador jugador : jugadores) {
                 jugador.dibujar(canvas);
+            }
+
+            System.out.println(bombas.size());
+            for(Bomba b:bombas) {
+
+                if (b.estado == b.PUESTA)
+                    b.dibujar(canvas);
             }
 
             // Lo demas

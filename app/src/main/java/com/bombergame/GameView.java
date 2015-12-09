@@ -15,6 +15,7 @@ import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.controlesJugador.MoverJugadorDerecha;
 import com.bombergame.controlesJugador.MoverJugadorIzquierda;
 import com.bombergame.gestores.GestorNiveles;
+import com.bombergame.modelos.Bomba;
 import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Nivel;
 import com.bombergame.modelos.Tile;
@@ -22,6 +23,7 @@ import com.bombergame.modelos.controles.BotonBomba;
 import com.bombergame.modelos.controles.Pad;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private BotonBomba botonBomba;
 
     private Map<Integer, ControladorJugaror> controladores;
+
 
     public GameView(Context context) {
         super(context);
@@ -126,6 +129,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (botonBomba.estaPulsado(x[i], y[i])) {
                     if (accion[i] == ACTION_DOWN) {
                         // TODO
+                        Jugador jugador = nivel.getJugadorTactil();
+                        Bomba b = new Bomba(context, jugador);
+                        nivel.bombas.add(b);
                     }
                 }
             }

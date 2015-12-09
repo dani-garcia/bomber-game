@@ -82,6 +82,14 @@ public class Jugador extends Modelo {
         inicializar();
     }
 
+    public double getX(){
+        return x;
+    }
+
+    public double getY(){
+        return y;
+    }
+
     public int getId() {
         return idJugador;
     }
