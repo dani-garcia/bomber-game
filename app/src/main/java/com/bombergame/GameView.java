@@ -3,6 +3,7 @@ package com.bombergame;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -58,24 +59,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         GestorNiveles.getInstancia().cargarDatosNivel(context);
         Tile[][] mapaTiles = GestorNiveles.getInstancia().getMapaTiles();
         List<Jugador> jugadores = GestorNiveles.getInstancia().getJugadores();
+        controladores = GestorNiveles.getInstancia().getControladores();
         nivel = new Nivel(context, numeroNivel, mapaTiles, jugadores);
 
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);
 
-        controladores = new HashMap<>();
-        controladores.put(KeyEvent.KEYCODE_W, new MoverJugadorArriba(nivel.getJugadores().get(0)));
-        controladores.put(KeyEvent.KEYCODE_S, new MoverJugadorAbajo(nivel.getJugadores().get(0)));
-        controladores.put(KeyEvent.KEYCODE_A, new MoverJugadorIzquierda(nivel.getJugadores().get(0)));
-        controladores.put(KeyEvent.KEYCODE_D, new MoverJugadorDerecha(nivel.getJugadores().get(0)));
+        Log.e("GAMEVIEW", "numero de controladores:" + controladores.keySet().size());
+
+//        controladores = new HashMap<>();
+//        controladores.put(KeyEvent.KEYCODE_W, new MoverJugadorArriba(nivel.getJugadores().get(0)));
+//        controladores.put(KeyEvent.KEYCODE_S, new MoverJugadorAbajo(nivel.getJugadores().get(0)));
+//        controladores.put(KeyEvent.KEYCODE_A, new MoverJugadorIzquierda(nivel.getJugadores().get(0)));
+//        controladores.put(KeyEvent.KEYCODE_D, new MoverJugadorDerecha(nivel.getJugadores().get(0)));
 
 
-        if (nivel.getJugadores().size()>1) {
-            controladores.put(KeyEvent.KEYCODE_DPAD_UP, new MoverJugadorArriba(nivel.getJugadores().get(1)));
-            controladores.put(KeyEvent.KEYCODE_DPAD_DOWN, new MoverJugadorAbajo(nivel.getJugadores().get(1)));
-            controladores.put(KeyEvent.KEYCODE_DPAD_LEFT, new MoverJugadorIzquierda(nivel.getJugadores().get(1)));
-            controladores.put(KeyEvent.KEYCODE_DPAD_RIGHT, new MoverJugadorDerecha(nivel.getJugadores().get(1)));
-        }
+//        if (nivel.getJugadores().size()>1) {
+//            controladores.put(KeyEvent.KEYCODE_DPAD_UP, new MoverJugadorArriba(nivel.getJugadores().get(1)));
+//            controladores.put(KeyEvent.KEYCODE_DPAD_DOWN, new MoverJugadorAbajo(nivel.getJugadores().get(1)));
+//            controladores.put(KeyEvent.KEYCODE_DPAD_LEFT, new MoverJugadorIzquierda(nivel.getJugadores().get(1)));
+//            controladores.put(KeyEvent.KEYCODE_DPAD_RIGHT, new MoverJugadorDerecha(nivel.getJugadores().get(1)));
+//        }
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -229,6 +233,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         ControladorJugaror accion = controladores.get(keyCode);
+        Log.e("GAMEVIEW", "-------------  Pulsación tecla:" + keyCode);
         if (accion != null)
             accion.keyDown();
         return super.onKeyUp(keyCode, event);

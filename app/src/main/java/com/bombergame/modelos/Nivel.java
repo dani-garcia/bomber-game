@@ -35,7 +35,7 @@ public class Nivel {
     }
 
     public Jugador getJugadorTactil() {
-        return jugadores.get(1);
+        return jugadores.get(0);
     }
 
     private List<Jugador> jugadores;

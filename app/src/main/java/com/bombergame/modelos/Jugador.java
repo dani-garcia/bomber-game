@@ -15,6 +15,8 @@ public class Jugador extends Modelo {
     private static final String CAMINANDO_ARRIBA = "Caminando_arriba";
     private static final String CAMINANDO_ABAJO = "Caminando_abajo";
 
+    private int idJugador;
+
     private Sprite sprite;
     private final HashMap<String, Sprite> sprites = new HashMap<>();
 
@@ -51,7 +53,7 @@ public class Jugador extends Modelo {
 //    public double msInmunidad = 0;
 //    public boolean golpeado = false;
 
-    public Jugador(Context context, double xInicial, double yInicial) {
+    public Jugador(Context context, double xInicial, double yInicial, int idJugador) {
         super(context, 0, 0, Ar.ancho(115), Ar.alto(62));
 
         this.xInicial = xInicial;
@@ -67,6 +69,9 @@ public class Jugador extends Modelo {
         orientacion = ABAJO;
 //        vidas = 3;
 
+
+        this.idJugador = idJugador;
+
         bombasLimite = 1;
         bombasColocadas = 0;
         velocidad = 1;
@@ -75,6 +80,10 @@ public class Jugador extends Modelo {
         explosionRemota = false;
 
         inicializar();
+    }
+
+    public int getId() {
+        return idJugador;
     }
 
     private void inicializar() {

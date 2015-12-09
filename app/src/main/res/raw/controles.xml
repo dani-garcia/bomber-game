@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<controles>
+    <jugador id="1">
+        <abajo>47</abajo>
+        <arriba>51</arriba>
+        <derecha>32</derecha>
+        <izquierda>29</izquierda>
+        <ponerbomba>31</ponerbomba>
+        <!--<detonarbombas></detonarbombas>
+        <patearbomba></patearbomba>-->
+    </jugador>
+    <jugador id="2">
+        <abajo>39</abajo>
+        <arriba>37</arriba>
+        <derecha>40</derecha>
+        <izquierda>38</izquierda>
+        <ponerbomba>42</ponerbomba>
+        <!--<detonarbombas></detonarbombas>
+        <patearbomba></patearbomba>-->
+    </jugador>
+    <jugador id="3">
+        <abajo>20</abajo>
+        <arriba>19</arriba>
+        <derecha>22</derecha>
+        <izquierda>21</izquierda>
+        <ponerbomba>113</ponerbomba>
+        <!--<detonarbombas></detonarbombas>
+        <patearbomba></patearbomba>-->
+    </jugador>
+    <jugador id="4">
+        <abajo>146</abajo>
+        <arriba>152</arriba>
+        <derecha>150</derecha>
+        <izquierda>148</izquierda>
+        <ponerbomba>157</ponerbomba>
+        <!--<detonarbombas></detonarbombas>
+        <patearbomba></patearbomba>-->
+    </jugador>
+</controles>

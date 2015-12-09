@@ -55,6 +55,7 @@ public class ParserXML {
             if (elem.hasChildNodes()){
                 for( child = elem.getFirstChild(); child != null; child = child.getNextSibling() ){
                     if( child.getNodeType() == Node.TEXT_NODE  ){
+                        String valor = child.getNodeValue();
                         return child.getNodeValue();
                     }
                 }
