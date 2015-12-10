@@ -63,7 +63,7 @@ public class Jugador extends Modelo {
         bombasLimite = 1;
         bombasColocadas = 0;
         velocidad = 1;
-        alcanceBombas = 1;
+        alcanceBombas = 2;
         patearBombas = false;
         explosionRemota = false;
 

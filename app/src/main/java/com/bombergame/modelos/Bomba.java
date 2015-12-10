@@ -64,19 +64,56 @@ public class Bomba extends Modelo{
         int tileX = nivel.getTileXFromCoord(x);
         int tileY = nivel.getTileYFromCoord(y);
         nivel.explosiones.add(new Explosion(context, x, y, nivel));
+        generarExplosionesEjeXPositivo(tileX, tileY);
+        generarExplosionesEjeXNegativo(tileX, tileY);
+        generarExplosionesEjeYPositivo(tileX, tileY);
+        generaExplosionesEjeYNegativo(tileX, tileY);
+
+    }
+
+    private void generarExplosionesEjeXPositivo(int tileX, int tileY){
+        boolean existeMuro = false;
         for(int i=1; i<=jugador.alcanceBombas; i++){
-            if (nivel.getMapaTiles()[tileX][tileY - i].tipoColision == Tile.PASABLE){
-                nivel.explosiones.add(new Explosion(context, x, y - Tile.altura * i, nivel));
-            }
-            if (nivel.getMapaTiles()[tileX][tileY + i].tipoColision == Tile.PASABLE){
-                nivel.explosiones.add(new Explosion(context, x, y + Tile.altura * i, nivel));
-            }
-            if (nivel.getMapaTiles()[tileX - i][tileY].tipoColision == Tile.PASABLE){
-                nivel.explosiones.add(new Explosion(context, x - Tile.ancho * i, y, nivel));
-            }
-            if (nivel.getMapaTiles()[tileX + i][tileY].tipoColision == Tile.PASABLE){
+            if (!existeMuro && nivel.getMapaTiles()[tileX + i][tileY].tipoColision == Tile.PASABLE){
                 nivel.explosiones.add(new Explosion(context, x + Tile.ancho * i, y, nivel));
+            } else {
+                existeMuro = true;
             }
         }
     }
+
+    private void generarExplosionesEjeXNegativo(int tileX, int tileY){
+        boolean existeMuro = false;
+        for(int i=1; i<=jugador.alcanceBombas; i++){
+            if (!existeMuro && nivel.getMapaTiles()[tileX - i][tileY].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x - Tile.ancho * i, y, nivel));
+            } else {
+                existeMuro = true;
+            }
+        }
+    }
+
+    private void generarExplosionesEjeYPositivo(int tileX, int tileY){
+        boolean existeMuro = false;
+        for(int i=1; i<=jugador.alcanceBombas; i++){
+            if (!existeMuro && nivel.getMapaTiles()[tileX][tileY + i].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x, y + Tile.altura * i, nivel));
+            } else {
+                existeMuro = true;
+            }
+        }
+    }
+
+    private void generaExplosionesEjeYNegativo(int tileX, int tileY){
+        boolean existeMuro = false;
+        for(int i=1; i<=jugador.alcanceBombas; i++){
+            if (!existeMuro && nivel.getMapaTiles()[tileX][tileY - i].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x, y - Tile.altura * i, nivel));
+            } else {
+                existeMuro = true;
+            }
+        }
+    }
+
+
 }
