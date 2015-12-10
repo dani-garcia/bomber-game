@@ -2,24 +2,13 @@ package com.bombergame.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.inputmethodservice.Keyboard;
-import android.util.Log;
-import android.view.KeyEvent;
 
 import com.bombergame.R;
-import com.bombergame.controlesJugador.ControladorJugaror;
-import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.gestores.CargadorGraficos;
-import com.bombergame.gestores.GestorNiveles;
 import com.bombergame.graficos.Ar;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class Nivel {
     private Context context = null;
@@ -32,6 +21,7 @@ public class Nivel {
     public boolean nivelPausado = false;
 
     public List<Bomba> bombas;
+    public List<Explosion> explosiones;
 
     public List<Jugador> getJugadores() {
         return jugadores;
@@ -39,6 +29,10 @@ public class Nivel {
 
     public Jugador getJugadorTactil() {
         return jugadores.get(0);
+    }
+
+    public Tile[][] getMapaTiles(){
+        return mapaTiles;
     }
 
     private List<Jugador> jugadores;
@@ -57,96 +51,49 @@ public class Nivel {
     public void inicializar() throws Exception {
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         bombas = new LinkedList<>();
-        // Inicializamos los tiles
-        //inicializarMapaTiles();
-
+        explosiones = new LinkedList<>();
     }
-
-    /*private void inicializarMapaTiles() {
-        try {
-            int anchoLinea;
-            List<String> lineas = new ArrayList<>();
-            InputStream is = context.getAssets().open(numeroNivel + ".txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            {
-                String linea = reader.readLine();
-                anchoLinea = linea.length();
-                while (linea != null) {
-                    lineas.add(linea);
-                    if (linea.length() != anchoLinea) {
-                        Log.e("ERROR", "Dimensiones incorrectas en la línea");
-                        throw new Exception("Dimensiones incorrectas en la línea.");
-                    }
-                    linea = reader.readLine();
-                }
-            }
-
-            // Configuramos la resolucion
-            Ar.configurar(anchoLinea, lineas.size());
-
-            // Inicializar la matriz
-            mapaTiles = new Tile[anchoLinea][lineas.size()];
-            // Iterar y completar todas las posiciones
-            for (int y = 0; y < altoMapaTiles(); ++y) {
-                for (int x = 0; x < anchoMapaTiles(); ++x) {
-                    char tipoDeTile = lineas.get(y).charAt(x);//lines[y][x];
-                    mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Tile inicializarTile(char codigoTile, int x, int y) {
-        // Posicion centro abajo
-        double xCentroAbajoTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
-        double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura);
-
-        switch (codigoTile) {
-            case '1':
-                // Jugador
-                jugador = new Jugador(context, xCentroAbajoTile, yCentroAbajoTile);
-                return Tile.VACIO;
-
-            case '#':
-                return new Tile(CargadorGraficos.cargarDrawable(context,
-                        R.drawable.tile_solid_block), Tile.SOLIDO);
-
-            default:
-                //cualquier otro caso
-                return Tile.VACIO;
-        }
-    }*/
 
 
     public void actualizar(long tiempo) {
         if (inicializado) {
             for (Jugador jugador : jugadores) {
-                jugador.procesarOrdenes();
+                jugador.procesarOrdenes(this);
                 jugador.actualizar(tiempo);
             }
 
             Bomba bombaEliminar = null;
             for(Bomba b:bombas){
-                if(b.estado == b.EXPLOSION_REALIZADA)
+                if(b.estado == b.INACTIVA)
                     bombaEliminar = b;
                 else
                     b.actualizar(tiempo);
             }
 
             bombas.remove(bombaEliminar);
+
+            List<Explosion> explosionesEliminar = new LinkedList<>();
+            for(Explosion e: explosiones){
+                if(e.estado == Explosion.FIN_EXPLOSION){
+                    explosionesEliminar.add(e);
+                } else {
+                    e.actualizar(tiempo);
+                }
+            }
+            for(Explosion e: explosionesEliminar){
+                explosiones.remove(e);
+            }
+
             aplicarReglasMovimiento();
         }
     }
 
-    private int getTileXFromCoord(double x) {
+    public int getTileXFromCoord(double x) {
         return (int) Math.round((((x - Ar.offsetX) / Ar.factor) - Tile.ancho / 2) / Tile.ancho);
     }
 
-    private int getTileYFromCoord(double y) {
-        return (int) Math.round((((y - Ar.offsetY) / Ar.factor) - Tile.altura) / Tile.altura);
+    public int getTileYFromCoord(double y) {
+        return (int) Math.round((((y - Ar.offsetY) / Ar.factor) - Tile.altura / 2) / Tile.altura);
     }
 
     private void aplicarReglasMovimiento() {
@@ -156,7 +103,7 @@ public class Nivel {
             if (jugador.movimiento) {
                 if (jugador.aMover > 0) {
                     int tileX = getTileXFromCoord(jugador.x);
-                    int tileY = getTileYFromCoord(jugador.y) + 1;
+                    int tileY = getTileYFromCoord(jugador.y);
 
                     // Nos movemos con la velocidad
                     double paso = Math.min(jugador.aMover, jugador.velocidadMovimiento);
@@ -187,7 +134,7 @@ public class Nivel {
 
                     // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
                     jugador.x = Ar.x(getTileXFromCoord(jugador.x) * Tile.ancho + Tile.ancho / 2);
-                    jugador.y = Ar.y(getTileYFromCoord(jugador.y) * Tile.altura + Tile.altura);
+                    jugador.y = Ar.y(getTileYFromCoord(jugador.y) * Tile.altura + Tile.altura / 2);
                 }
             }
         }
@@ -206,6 +153,9 @@ public class Nivel {
 
             for(Bomba b:bombas) {
                 b.dibujar(canvas);
+            }
+            for(Explosion e: explosiones){
+                e.dibujar(canvas);
             }
 
             // Lo demas

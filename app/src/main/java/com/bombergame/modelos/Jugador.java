@@ -49,26 +49,14 @@ public class Jugador extends Modelo {
     public boolean patearBomba;
     public boolean explotarBombas;
 
-//    public int vidas;
-//    public double msInmunidad = 0;
-//    public boolean golpeado = false;
-
     public Jugador(Context context, double xInicial, double yInicial, int idJugador) {
-        super(context, 0, 0, Ar.ancho(115), Ar.alto(62));
-
-        this.xInicial = xInicial;
-        this.yInicial = yInicial - altura / 2;
-
-        this.x = this.xInicial;
-        this.y = this.yInicial;
+        super(context, xInicial, yInicial, Ar.ancho(115), Ar.alto(62));
 
         cIzquierda = cDerecha = Ar.ancho(20);
-        cArriba = Ar.alto(-5);
-        cAbajo = Ar.alto(45);
+        cArriba = Ar.alto(25);
+        cAbajo = Ar.alto(25);
 
         orientacion = ABAJO;
-//        vidas = 3;
-
 
         this.idJugador = idJugador;
 
@@ -105,7 +93,7 @@ public class Jugador extends Modelo {
         sprite = sprites.get(CAMINANDO_ABAJO);
     }
 
-    public void procesarOrdenes() {
+    public void procesarOrdenes(Nivel nivel) {
         // Si no nos estamos moviendo, y nos envian un movimiento, nos movemos
         if (!movimiento) {
             if (moverAbajo) {
@@ -129,28 +117,11 @@ public class Jugador extends Modelo {
                 sprite =sprites.get(CAMINANDO_IZQUIERDA);
                 orientacion = IZQUIERDA;
             }
-            /*// Solo nos movemos en un eje, asi que cojemos el que tenga un valor mayor
-            if (Math.abs(orientacionPadX) > Math.abs(orientacionPadY)) {
-                aMover = Ar.ancho(Tile.ancho);
+        }
 
-                if (orientacionPadX > 0) {
-                    sprite = sprites.get(CAMINANDO_DERECHA);
-                    orientacion = DERECHA;
-                } else if (orientacionPadX < 0) {
-                    sprite = sprites.get(CAMINANDO_IZQUIERDA);
-                    orientacion = IZQUIERDA;
-                }
-            } else {
-                aMover = Ar.alto(Tile.altura);
-
-                if (orientacionPadY > 0) {
-                    sprite = sprites.get(CAMINANDO_ABAJO);
-                    orientacion = ABAJO;
-                } else if (orientacionPadY < 0) {
-                    sprite = sprites.get(CAMINANDO_ARRIBA);
-                    orientacion = ARRIBA;
-                }
-            }*/
+        if (ponerBomba && bombasColocadas < bombasLimite) {
+            Bomba b = new Bomba(context, this, nivel);
+            nivel.bombas.add(b);
         }
     }
 
@@ -165,30 +136,18 @@ public class Jugador extends Modelo {
     }
 
     public int golpeado() {
-//        if (msInmunidad <= 0) {
-//            if (vidas > 0) {
-//                vidas--;
-//                msInmunidad = 3000;
-//                golpeado = true;
-//            }
-//        }
-//        return vidas;
         return 0;
     }
 
     @Override
     protected void doDibujar(Canvas canvas) {
 //        sprite.dibujarSprite(canvas, (int) x, (int) y, msInmunidad > 0);
-        sprite.dibujarSprite(canvas, (int) x, (int) y, false);
+        sprite.dibujarSprite(canvas, (int) x, (int) y -Tile.altura/2, false);
     }
 
     public void restablecerPosicionInicial() {
         this.x = xInicial;
         this.y = yInicial;
-
-//        vidas = 3;
-//        golpeado = false;
-//        msInmunidad = 0;
 
         sprite = sprites.get(CAMINANDO_DERECHA);
     }

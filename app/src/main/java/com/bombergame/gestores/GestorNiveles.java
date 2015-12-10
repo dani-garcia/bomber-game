@@ -232,7 +232,7 @@ public class GestorNiveles {
                 int tileNumeric = Character.getNumericValue(codigoTile);
                 if (tileNumeric <= numeroJugadores) {
                     double xCentroAbajoTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
-                    double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura);
+                    double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura / 2);
 
                     jugadores.add(new Jugador(context, xCentroAbajoTile, yCentroAbajoTile, tileNumeric));
                     //iniciosJugadores.put(Integer.getInteger("" + codigoTile), new Point(x, y));

@@ -98,6 +98,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void procesarEventosTouch() {
         boolean pulsacionPadMover = false;
+        boolean pulsacionBotonBomba = false;
         for (int i = 0; i < 6; i++) {
             if (accion[i] != NO_ACTION) {
                 if (accion[i] == ACTION_DOWN && nivel.nivelPausado) {
@@ -128,14 +129,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
                 if (botonBomba.estaPulsado(x[i], y[i])) {
                     if (accion[i] == ACTION_DOWN) {
-                        // TODO
-
                         Jugador jugador = nivel.getJugadorTactil();
-                        if (jugador.bombasColocadas < jugador.bombasLimite) {
-                            Bomba b = new Bomba(context, jugador);
-                            nivel.bombas.add(b);
-                        }
-
+                        jugador.ordenPonerBomba();
+                        pulsacionBotonBomba = true;
                     }
                 }
             }
@@ -145,6 +141,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             nivel.getJugadorTactil().ordenFinMovimientoIzquierda();
             nivel.getJugadorTactil().ordenFinMovimientoAbajo();
             nivel.getJugadorTactil().ordenFinMovimientoArriba();
+        }
+        if(!pulsacionBotonBomba) {
+            nivel.getJugadorTactil().ordenFinPonerBomba();
         }
     }
 

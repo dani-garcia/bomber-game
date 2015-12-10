@@ -7,7 +7,7 @@ import com.bombergame.R;
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
 
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Cristian on 08/12/2015.
@@ -16,23 +16,23 @@ public class Bomba extends Modelo{
 
     private Sprite sprite;
 
-    double x;
-    double y;
     Jugador jugador;
 
-    public static int EXPLOSION_REALIZADA = 2;
-    public static int EXPLOTADA = 1;
+    public static int INACTIVA = 2;
+    public static int EXPLOTANDO = 1;
     public static int PUESTA = 0;
     public int estado;
-
+    public Nivel nivel;
+    private int duracionBomba = 3000;
     long tiempoPuesta;
 
 
-    public Bomba(Context context, Jugador jugador) {
-        super(context, 0, 0, Ar.ancho(48), Ar.alto(48));
-
-        this.x = jugador.getX();
-        this.y = jugador.getY() + 35;
+    public Bomba(Context context, Jugador jugador, Nivel nivel) {
+        super(context, Ar.x(nivel.getTileXFromCoord(jugador.x) * Tile.ancho + Tile.ancho / 2)
+                , Ar.y(nivel.getTileYFromCoord(jugador.y) * Tile.altura + Tile.altura / 2),
+                Ar.ancho(48),
+                Ar.alto(48));
+        this.nivel = nivel;
         this.jugador = jugador;
         estado = PUESTA;
         sprite = Sprite.create(context, R.drawable.bomb, ancho, altura, 1, 3, true);
@@ -43,23 +43,40 @@ public class Bomba extends Modelo{
     @Override
     public void actualizar(long tiempo) {
         sprite.actualizar(tiempo);
-        if(estado == PUESTA && System.currentTimeMillis() - tiempoPuesta >=3000) {
-            explotar();
+        if(estado == PUESTA && System.currentTimeMillis() - tiempoPuesta >= duracionBomba) {
+            estado = EXPLOTANDO;
+            generarExplosiones();
             tiempoPuesta = System.currentTimeMillis();
-        }
-        else if(estado == EXPLOTADA && System.currentTimeMillis() - tiempoPuesta >=3000){
-            estado = EXPLOSION_REALIZADA;
+        } else if(estado == EXPLOTANDO && System.currentTimeMillis() - tiempoPuesta >= Explosion.tiempoExplosion){
+            estado = INACTIVA;
             jugador.bombasColocadas--;
         }
+
     }
 
     @Override
     protected void doDibujar(Canvas canvas) {
-        sprite.dibujarSprite(canvas, (int) x, (int) y, false);
+        if(estado == PUESTA)
+            sprite.dibujarSprite(canvas, (int) x, (int) y, false);
     }
 
-    public void explotar(){
-        estado = EXPLOTADA;
-        sprite = Sprite.create(context, R.drawable.flame, ancho, altura, 12, 5, true);
+    private void generarExplosiones(){
+        int tileX = nivel.getTileXFromCoord(x);
+        int tileY = nivel.getTileYFromCoord(y);
+        nivel.explosiones.add(new Explosion(context, x, y, nivel));
+        for(int i=1; i<=jugador.alcanceBombas; i++){
+            if (nivel.getMapaTiles()[tileX][tileY - i].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x, y - Tile.altura * i, nivel));
+            }
+            if (nivel.getMapaTiles()[tileX][tileY + i].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x, y + Tile.altura * i, nivel));
+            }
+            if (nivel.getMapaTiles()[tileX - i][tileY].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x - Tile.ancho * i, y, nivel));
+            }
+            if (nivel.getMapaTiles()[tileX + i][tileY].tipoColision == Tile.PASABLE){
+                nivel.explosiones.add(new Explosion(context, x + Tile.ancho * i, y, nivel));
+            }
+        }
     }
 }
