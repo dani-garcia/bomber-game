@@ -42,7 +42,6 @@ public class Enemigo extends Modelo {
         cAbajo = Ar.alto(25);
 
         inicializar();
-        asignarSentidoOrientacion(true, true, true, true);
     }
 
     private void inicializar() {
@@ -64,44 +63,38 @@ public class Enemigo extends Modelo {
     }
 
     public void mover(Nivel nivel) {
-        int tileX = nivel.getTileXFromCoord(x);
-        int tileY = nivel.getTileYFromCoord(y);
-        Tile tileSuperior = nivel.getMapaTiles()[tileX][tileY + 1];
-        Tile tileInferior = nivel.getMapaTiles()[tileX][tileY - 1];
-        Tile tileDerecho = nivel.getMapaTiles()[tileX + 1][tileY];
-        Tile tileIzquierdo = nivel.getMapaTiles()[tileX - 1][tileY];
+        if (aMover > 0) {
+            double paso = Math.min(aMover, velocidadMovimiento);
+            aMover -= paso;
 
-        double paso = Math.min(aMover, velocidadMovimiento);
-        aMover -= paso;
-
-        switch (orientacion) {
-            case ARRIBA:
-                if (tileInferior.tipoColision == Tile.PASABLE) {
+            switch (orientacion) {
+                case ARRIBA:
                     y -= paso;
-                    aMover = Ar.alto(Tile.altura);
-                }
-                break;
-            case ABAJO:
-                if (tileSuperior.tipoColision == Tile.PASABLE) {
-                    y += paso;
-                    aMover = Ar.alto(Tile.altura);
-                }
-                break;
-            case IZQUIERDA:
-                if (tileIzquierdo.tipoColision == Tile.PASABLE) {
-                    x -= paso;
-                    aMover = Ar.alto(Tile.ancho);
-                }
-                break;
-            case DERECHA:
-                if (tileDerecho.tipoColision == Tile.PASABLE) {
-                    x += paso;
-                    aMover = Ar.alto(Tile.ancho);
-                }
-                break;
-        }
+                    break;
 
-        actualizarMovimiento(tileSuperior, tileInferior, tileDerecho, tileIzquierdo);
+                case ABAJO:
+                    y += paso;
+                    break;
+
+                case IZQUIERDA:
+                    x -= paso;
+                    break;
+
+                case DERECHA:
+                    x += paso;
+                    break;
+            }
+        } else {
+            int tileX = nivel.getTileXFromCoord(x);
+            int tileY = nivel.getTileYFromCoord(y);
+            Tile tileSuperior = nivel.getMapaTiles()[tileX][tileY - 1];
+            Tile tileInferior = nivel.getMapaTiles()[tileX][tileY + 1];
+            Tile tileDerecho = nivel.getMapaTiles()[tileX + 1][tileY];
+            Tile tileIzquierdo = nivel.getMapaTiles()[tileX - 1][tileY];
+
+            // Fin del movimiento y recalculamos
+            actualizarMovimiento(tileSuperior, tileInferior, tileDerecho, tileIzquierdo);
+        }
     }
 
     /**
@@ -113,32 +106,33 @@ public class Enemigo extends Modelo {
      * @param izquierdo
      */
     public void actualizarMovimiento(Tile superior, Tile inferior, Tile derecho, Tile izquierdo) {
-        boolean abajo = true;
-        boolean arriba = true;
-        boolean derecha = true;
-        boolean izquierda = true;
+        boolean abajo = inferior.tipoColision == Tile.PASABLE;
+        boolean arriba = superior.tipoColision == Tile.PASABLE;
+        boolean derecha = derecho.tipoColision == Tile.PASABLE;
+        boolean izquierda = izquierdo.tipoColision == Tile.PASABLE;
 
-        boolean nuevaRuta = false;
+        // TODO Puede que nos interese de vez en cuando cambiar la direccion de movimiento, para que el movimiento quede un poco mejor
+        // Pseudocodigo
+        //  if (random() > 0.8) { // 20% de posibilidad
+        //      asignarSentidoOrientacion(arriba, abajo, derecha, izquierda);
+        //      return;
+        //  }
 
-        if (ultimoSentido.equals(CAMINANDO_ABAJO) && inferior.tipoColision != Tile.PASABLE) {
-            nuevaRuta = true;
-        } else if (ultimoSentido.equals(CAMINANDO_ARRIBA) && superior.tipoColision != Tile.PASABLE) {
-            nuevaRuta = true;
-        } else if (ultimoSentido.equals(CAMINANDO_DERECHA) && derecho.tipoColision != Tile.PASABLE) {
-            nuevaRuta = true;
-        } else if (ultimoSentido.equals(CAMINANDO_IZQUIERDA) && izquierdo.tipoColision != Tile.PASABLE) {
-            nuevaRuta = true;
-        }
+        // Si la dirección en la que íbamos sigue pasable, continuamos
+        if (ultimoSentido.equals(CAMINANDO_ABAJO) && abajo) {
+            aMover = Ar.alto(Tile.altura);
 
-        if (nuevaRuta) {
-            if (inferior.tipoColision != Tile.PASABLE)
-                abajo = false;
-            if (superior.tipoColision != Tile.PASABLE)
-                arriba = false;
-            if (derecho.tipoColision != Tile.PASABLE)
-                derecha = false;
-            if (izquierdo.tipoColision != Tile.PASABLE)
-                izquierda = false;
+        } else if (ultimoSentido.equals(CAMINANDO_ARRIBA) && arriba) {
+            aMover = Ar.alto(Tile.altura);
+
+        } else if (ultimoSentido.equals(CAMINANDO_DERECHA) && derecha) {
+            aMover = Ar.alto(Tile.ancho);
+
+        } else if (ultimoSentido.equals(CAMINANDO_IZQUIERDA) && izquierda) {
+            aMover = Ar.alto(Tile.ancho);
+        } else {
+
+            // Si esta bloqueada, obtenemos una nueva
             asignarSentidoOrientacion(arriba, abajo, derecha, izquierda);
         }
     }
