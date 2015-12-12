@@ -80,21 +80,25 @@ public class Enemigo extends Modelo{
             case ARRIBA:
                 if (tileInferior.tipoColision == Tile.PASABLE) {
                     y -= paso;
+                    aMover = Ar.alto(Tile.altura);
                 }
                 break;
             case ABAJO:
                 if (tileSuperior.tipoColision == Tile.PASABLE) {
                     y += paso;
+                    aMover = Ar.alto(Tile.altura);
                 }
                 break;
             case IZQUIERDA:
                 if (tileIzquierdo.tipoColision == Tile.PASABLE) {
                     x -= paso;
+                    aMover = Ar.alto(Tile.altura);
                 }
                 break;
             case DERECHA:
                 if (tileDerecho.tipoColision == Tile.PASABLE) {
                     x += paso;
+                    aMover = Ar.alto(Tile.altura);
                 }
                 break;
         }
