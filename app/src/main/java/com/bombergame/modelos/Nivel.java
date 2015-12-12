@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import com.bombergame.R;
 import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
+import com.bombergame.modelos.mejoras.Mejora;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class Nivel {
     }
 
     private List<Jugador> jugadores;
+    public List<Mejora> mejoras;
 
     public Nivel(Context context, int numeroNivel, Tile[][] mapaTiles, List<Jugador> jugadores) throws Exception {
         inicializado = false;
@@ -52,6 +54,7 @@ public class Nivel {
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         bombas = new LinkedList<>();
         explosiones = new LinkedList<>();
+        mejoras = new LinkedList<>();
     }
 
 
@@ -84,6 +87,16 @@ public class Nivel {
                 explosiones.remove(e);
             }
 
+            List<Mejora> mejorasEliminar = new LinkedList<>();
+            for(Mejora m: mejoras){
+                if(m.estado == Mejora.COGIDA){
+                    mejorasEliminar.add(m);
+                }
+            }
+            for(Mejora m: mejorasEliminar){
+                mejoras.remove(m);
+            }
+
             aplicarReglasMovimiento();
         }
     }
@@ -99,7 +112,6 @@ public class Nivel {
     private void aplicarReglasMovimiento() {
         // Jugador
         for (Jugador jugador : jugadores) {
-
             if (jugador.movimiento) {
                 if (jugador.aMover > 0) {
                     int tileX = getTileXFromCoord(jugador.x);
@@ -147,16 +159,19 @@ public class Nivel {
 
             dibujarTiles(canvas);
 
-            for (Jugador jugador : jugadores) {
-                jugador.dibujar(canvas);
-            }
-
             for(Bomba b:bombas) {
                 b.dibujar(canvas);
             }
             for(Explosion e: explosiones){
                 e.dibujar(canvas);
             }
+            for(Mejora m:mejoras){
+                m.dibujar(canvas);
+            }
+            for (Jugador jugador : jugadores) {
+                jugador.dibujar(canvas);
+            }
+
 
             // Lo demas
         }

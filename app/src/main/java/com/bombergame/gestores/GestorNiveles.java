@@ -242,7 +242,9 @@ public class GestorNiveles {
             case '#':
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.tile_solid_block), Tile.SOLIDO);
-
+            case 'D':
+                return new Tile(CargadorGraficos.cargarDrawable(context,
+                        R.drawable.tile_destructible_block), Tile.DESTRUIBLE);
             default:
                 //cualquier otro caso
                 return Tile.VACIO;
