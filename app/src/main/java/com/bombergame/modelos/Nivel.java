@@ -37,15 +37,17 @@ public class Nivel {
     }
 
     private List<Jugador> jugadores;
+    private List<Enemigo> enemigos;
     public List<Mejora> mejoras;
 
-    public Nivel(Context context, int numeroNivel, Tile[][] mapaTiles, List<Jugador> jugadores) throws Exception {
+    public Nivel(Context context, int numeroNivel, Tile[][] mapaTiles, List<Jugador> jugadores, List<Enemigo> enemigos) throws Exception {
         inicializado = false;
 
         this.context = context;
         this.numeroNivel = numeroNivel;
         this.mapaTiles = mapaTiles;
         this.jugadores = jugadores;
+        this.enemigos = enemigos;
         inicializar();
         inicializado = true;
     }
@@ -63,6 +65,11 @@ public class Nivel {
             for (Jugador jugador : jugadores) {
                 jugador.procesarOrdenes(this);
                 jugador.actualizar(tiempo);
+            }
+
+            for(Enemigo enemigo: enemigos){
+                enemigo.mover(this);
+                enemigo.actualizar(tiempo);
             }
 
             Bomba bombaEliminar = null;
@@ -170,6 +177,10 @@ public class Nivel {
             }
             for (Jugador jugador : jugadores) {
                 jugador.dibujar(canvas);
+            }
+
+            for (Enemigo enemigo: enemigos){
+                enemigo.dibujar(canvas);
             }
 
 

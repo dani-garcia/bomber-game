@@ -16,6 +16,7 @@ import com.bombergame.controlesJugador.MoverJugadorDerecha;
 import com.bombergame.controlesJugador.MoverJugadorIzquierda;
 import com.bombergame.gestores.GestorNiveles;
 import com.bombergame.modelos.Bomba;
+import com.bombergame.modelos.Enemigo;
 import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Nivel;
 import com.bombergame.modelos.Tile;
@@ -62,8 +63,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         GestorNiveles.getInstancia().cargarDatosNivel(context);
         Tile[][] mapaTiles = GestorNiveles.getInstancia().getMapaTiles();
         List<Jugador> jugadores = GestorNiveles.getInstancia().getJugadores();
+        List<Enemigo> enemigos = GestorNiveles.getInstancia().getEnemigos();
         controladores = GestorNiveles.getInstancia().getControladores();
-        nivel = new Nivel(context, numeroNivel, mapaTiles, jugadores);
+        nivel = new Nivel(context, numeroNivel, mapaTiles, jugadores, enemigos);
 
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);

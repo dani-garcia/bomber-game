@@ -11,6 +11,7 @@ import com.bombergame.graficos.Sprite;
 public class MejoraVelocidad extends Mejora{
     public MejoraVelocidad(Context context, double x, double y) {
         super(context, x, y);
+        tipo = Mejora.VELOCIDAD_MOVIMIENTO;
     }
 
     @Override

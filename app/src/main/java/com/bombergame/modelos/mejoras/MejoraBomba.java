@@ -11,6 +11,7 @@ import com.bombergame.graficos.Sprite;
 public class MejoraBomba extends Mejora{
     public MejoraBomba(Context context, double x, double y) {
         super(context, x, y);
+        tipo = Mejora.BOMBA;
     }
 
     @Override

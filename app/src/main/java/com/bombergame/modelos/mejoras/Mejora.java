@@ -18,6 +18,10 @@ public abstract class Mejora extends Modelo {
     public static int SIN_COGER = 0;
     public static int COGIDA = 1;
 
+    public int tipo;
+    public static int BOMBA = 1;
+    public static int EXPLOSION = 2;
+    public static int VELOCIDAD_MOVIMIENTO = 3;
 
     public Mejora(Context context, double x, double y){
         super(context, x, y, Ar.ancho(58), Ar.alto(58));

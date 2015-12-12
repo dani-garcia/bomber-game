@@ -12,6 +12,7 @@ import com.bombergame.controlesJugador.MoverJugadorDerecha;
 import com.bombergame.controlesJugador.MoverJugadorIzquierda;
 import com.bombergame.controlesJugador.PonerBomba;
 import com.bombergame.graficos.Ar;
+import com.bombergame.modelos.Enemigo;
 import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Tile;
 
@@ -37,6 +38,7 @@ import javax.xml.xpath.XPathFactory;
 public class GestorNiveles {
 
     private List<Jugador> jugadores;
+    private List<Enemigo> enemigos;
     private int numeroJugadores = 1;
     private int nivelActual = 1;
 
@@ -78,6 +80,8 @@ public class GestorNiveles {
         return jugadores;
     }
 
+    public List<Enemigo> getEnemigos(){ return enemigos; }
+
     public Tile[][] getMapaTiles() {
         return mapaTiles;
     }
@@ -88,11 +92,10 @@ public class GestorNiveles {
 
     public void cargarDatosNivel(Context context) {
         jugadores = new LinkedList<>();
-        //iniciosJugadores = new HashMap<>();
+        enemigos = new LinkedList<>();
         controladores = new HashMap<>();
 
         inicializarMapaTiles(context);
-        //comprobarNumeroJugadores(context);
         inicializarContoles(context);
     }
 
@@ -235,7 +238,6 @@ public class GestorNiveles {
                     double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura / 2);
 
                     jugadores.add(new Jugador(context, xCentroAbajoTile, yCentroAbajoTile, tileNumeric));
-                    //iniciosJugadores.put(Integer.getInteger("" + codigoTile), new Point(x, y));
                 }
                 return Tile.VACIO;
 
@@ -245,6 +247,13 @@ public class GestorNiveles {
             case 'D':
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.tile_destructible_block), Tile.DESTRUIBLE);
+            case 'E':
+                double xCentroAbajoTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
+                double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura / 2);
+
+                enemigos.add(new Enemigo(context, xCentroAbajoTile, yCentroAbajoTile));
+
+                return Tile.VACIO;
             default:
                 //cualquier otro caso
                 return Tile.VACIO;
