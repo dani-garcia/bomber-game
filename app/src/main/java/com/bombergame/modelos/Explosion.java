@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Created by Cristian on 09/12/2015.
  */
-public class Explosion extends Modelo{
+public class Explosion extends Modelo {
 
     private Sprite sprite;
 
@@ -51,12 +51,12 @@ public class Explosion extends Modelo{
     @Override
     public void actualizar(long tiempo) {
         //if(estado == EXPLOTANDO) //Solo se actualiza si está explotando
-            sprite.actualizar(tiempo);
-        if((estado == EXPLOTANDO || estado == EXPLOTANDO_DESTRUIBLE) && System.currentTimeMillis() - tiempoFuego >= tiempoExplosion){
+        sprite.actualizar(tiempo);
+        if ((estado == EXPLOTANDO || estado == EXPLOTANDO_DESTRUIBLE) && System.currentTimeMillis() - tiempoFuego >= tiempoExplosion) {
             estado = FIN_EXPLOSION;
             int tileX = nivel.getTileXFromCoord(x);
             int tileY = nivel.getTileYFromCoord(y);
-            if(nivel.getMapaTiles()[tileX][tileY].tipoColision == Tile.DESTRUIBLE) {
+            if (nivel.getMapaTiles()[tileX][tileY].tipoColision == Tile.DESTRUIBLE) {
                 System.out.println("Hay que dejar una mejora");
                 dejarMejora();
                 nivel.getMapaTiles()[tileX][tileY] = new Tile(null, Tile.PASABLE);
@@ -64,10 +64,10 @@ public class Explosion extends Modelo{
         }
     }
 
-    private void dejarMejora(){
+    private void dejarMejora() {
         Random r = new Random();
         int n = r.nextInt(probabilidadNoMejora);
-        switch (n){
+        switch (n) {
             case 0:
                 nivel.mejoras.add(new MejoraBomba(context, x, y));
                 break;
@@ -82,7 +82,7 @@ public class Explosion extends Modelo{
 
     @Override
     protected void doDibujar(Canvas canvas) {
-        if(estado == EXPLOTANDO || estado == EXPLOTANDO_DESTRUIBLE)
+        if (estado == EXPLOTANDO || estado == EXPLOTANDO_DESTRUIBLE)
             sprite.dibujarSprite(canvas, (int) x, (int) y, false);
     }
 }

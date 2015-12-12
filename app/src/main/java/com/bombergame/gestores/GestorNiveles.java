@@ -80,7 +80,9 @@ public class GestorNiveles {
         return jugadores;
     }
 
-    public List<Enemigo> getEnemigos(){ return enemigos; }
+    public List<Enemigo> getEnemigos() {
+        return enemigos;
+    }
 
     public Tile[][] getMapaTiles() {
         return mapaTiles;

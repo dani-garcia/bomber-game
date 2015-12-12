@@ -32,7 +32,7 @@ public class Nivel {
         return jugadores.get(0);
     }
 
-    public Tile[][] getMapaTiles(){
+    public Tile[][] getMapaTiles() {
         return mapaTiles;
     }
 
@@ -67,14 +67,14 @@ public class Nivel {
                 jugador.actualizar(tiempo);
             }
 
-            for(Enemigo enemigo: enemigos){
+            for (Enemigo enemigo : enemigos) {
                 enemigo.mover(this);
                 enemigo.actualizar(tiempo);
             }
 
             Bomba bombaEliminar = null;
-            for(Bomba b:bombas){
-                if(b.estado == b.INACTIVA)
+            for (Bomba b : bombas) {
+                if (b.estado == b.INACTIVA)
                     bombaEliminar = b;
                 else
                     b.actualizar(tiempo);
@@ -83,24 +83,24 @@ public class Nivel {
             bombas.remove(bombaEliminar);
 
             List<Explosion> explosionesEliminar = new LinkedList<>();
-            for(Explosion e: explosiones){
-                if(e.estado == Explosion.FIN_EXPLOSION){
+            for (Explosion e : explosiones) {
+                if (e.estado == Explosion.FIN_EXPLOSION) {
                     explosionesEliminar.add(e);
                 } else {
                     e.actualizar(tiempo);
                 }
             }
-            for(Explosion e: explosionesEliminar){
+            for (Explosion e : explosionesEliminar) {
                 explosiones.remove(e);
             }
 
             List<Mejora> mejorasEliminar = new LinkedList<>();
-            for(Mejora m: mejoras){
-                if(m.estado == Mejora.COGIDA){
+            for (Mejora m : mejoras) {
+                if (m.estado == Mejora.COGIDA) {
                     mejorasEliminar.add(m);
                 }
             }
-            for(Mejora m: mejorasEliminar){
+            for (Mejora m : mejorasEliminar) {
                 mejoras.remove(m);
             }
 
@@ -166,20 +166,20 @@ public class Nivel {
 
             dibujarTiles(canvas);
 
-            for(Bomba b:bombas) {
+            for (Bomba b : bombas) {
                 b.dibujar(canvas);
             }
-            for(Explosion e: explosiones){
+            for (Explosion e : explosiones) {
                 e.dibujar(canvas);
             }
-            for(Mejora m:mejoras){
+            for (Mejora m : mejoras) {
                 m.dibujar(canvas);
             }
             for (Jugador jugador : jugadores) {
                 jugador.dibujar(canvas);
             }
 
-            for (Enemigo enemigo: enemigos){
+            for (Enemigo enemigo : enemigos) {
                 enemigo.dibujar(canvas);
             }
 

@@ -23,7 +23,7 @@ public abstract class Mejora extends Modelo {
     public static int EXPLOSION = 2;
     public static int VELOCIDAD_MOVIMIENTO = 3;
 
-    public Mejora(Context context, double x, double y){
+    public Mejora(Context context, double x, double y) {
         super(context, x, y, Ar.ancho(58), Ar.alto(58));
         setSprite();
         estado = SIN_COGER;
@@ -33,7 +33,7 @@ public abstract class Mejora extends Modelo {
 
     @Override
     protected void doDibujar(Canvas canvas) {
-        if(estado == SIN_COGER)
+        if (estado == SIN_COGER)
             sprite.dibujarSprite(canvas, (int) x, (int) y, false);
     }
 

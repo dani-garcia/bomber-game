@@ -18,7 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class ParserXML {
 
-    public Document getDom(String xml){
+    public Document getDom(String xml) {
         Document doc = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
@@ -49,12 +49,12 @@ public class ParserXML {
         return this.getValorDelElemento(n.item(0));
     }
 
-    public final String getValorDelElemento( Node elem ) {
+    public final String getValorDelElemento(Node elem) {
         Node child;
-        if( elem != null){
-            if (elem.hasChildNodes()){
-                for( child = elem.getFirstChild(); child != null; child = child.getNextSibling() ){
-                    if( child.getNodeType() == Node.TEXT_NODE  ){
+        if (elem != null) {
+            if (elem.hasChildNodes()) {
+                for (child = elem.getFirstChild(); child != null; child = child.getNextSibling()) {
+                    if (child.getNodeType() == Node.TEXT_NODE) {
                         String valor = child.getNodeValue();
                         return child.getNodeValue();
                     }

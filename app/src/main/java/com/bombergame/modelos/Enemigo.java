@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * Created by Cristian on 12/12/2015.
  */
-public class Enemigo extends Modelo{
+public class Enemigo extends Modelo {
 
     private String ultimoSentido = "";
     private static final String CAMINANDO_IZQUIERDA = "Caminando_izquierda";
@@ -33,7 +33,6 @@ public class Enemigo extends Modelo{
     private final HashMap<String, Sprite> sprites = new HashMap<>();
 
     public double velocidadMovimiento = 3f;
-    public boolean movimiento;
 
     public Enemigo(Context context, double xInicial, double yInicial) {
         super(context, xInicial, yInicial, Ar.ancho(115), Ar.alto(62));
@@ -46,7 +45,7 @@ public class Enemigo extends Modelo{
         asignarSentidoOrientacion(true, true, true, true);
     }
 
-    private void inicializar(){
+    private void inicializar() {
         sprites.put(CAMINANDO_DERECHA, Sprite.create(context, R.drawable.enemy_right, ancho, altura, 11, 7, true));
         sprites.put(CAMINANDO_IZQUIERDA, Sprite.create(context, R.drawable.enemy_left, ancho, altura, 11, 7, true));
 
@@ -65,7 +64,6 @@ public class Enemigo extends Modelo{
     }
 
     public void mover(Nivel nivel) {
-        // Si no nos estamos moviendo, y nos envian un movimiento, nos movemos
         int tileX = nivel.getTileXFromCoord(x);
         int tileY = nivel.getTileYFromCoord(y);
         Tile tileSuperior = nivel.getMapaTiles()[tileX][tileY + 1];
@@ -92,13 +90,13 @@ public class Enemigo extends Modelo{
             case IZQUIERDA:
                 if (tileIzquierdo.tipoColision == Tile.PASABLE) {
                     x -= paso;
-                    aMover = Ar.alto(Tile.altura);
+                    aMover = Ar.alto(Tile.ancho);
                 }
                 break;
             case DERECHA:
                 if (tileDerecho.tipoColision == Tile.PASABLE) {
                     x += paso;
-                    aMover = Ar.alto(Tile.altura);
+                    aMover = Ar.alto(Tile.ancho);
                 }
                 break;
         }
@@ -106,7 +104,15 @@ public class Enemigo extends Modelo{
         actualizarMovimiento(tileSuperior, tileInferior, tileDerecho, tileIzquierdo);
     }
 
-    public void actualizarMovimiento(Tile superior, Tile inferior, Tile derecho, Tile izquierdo){
+    /**
+     * Método que calcula si es necesaria una nueva ruta para que el enemigo continue su movimiento por el mapa
+     *
+     * @param superior
+     * @param inferior
+     * @param derecho
+     * @param izquierdo
+     */
+    public void actualizarMovimiento(Tile superior, Tile inferior, Tile derecho, Tile izquierdo) {
         boolean abajo = true;
         boolean arriba = true;
         boolean derecha = true;
@@ -114,44 +120,49 @@ public class Enemigo extends Modelo{
 
         boolean nuevaRuta = false;
 
-        if(ultimoSentido.equals(CAMINANDO_ABAJO) && inferior.tipoColision != Tile.PASABLE) {
+        if (ultimoSentido.equals(CAMINANDO_ABAJO) && inferior.tipoColision != Tile.PASABLE) {
             nuevaRuta = true;
-        }
-        else if(ultimoSentido.equals(CAMINANDO_ARRIBA) && superior.tipoColision != Tile.PASABLE){
+        } else if (ultimoSentido.equals(CAMINANDO_ARRIBA) && superior.tipoColision != Tile.PASABLE) {
             nuevaRuta = true;
-        }
-        else if(ultimoSentido.equals(CAMINANDO_DERECHA) && derecho.tipoColision != Tile.PASABLE){
+        } else if (ultimoSentido.equals(CAMINANDO_DERECHA) && derecho.tipoColision != Tile.PASABLE) {
             nuevaRuta = true;
-        }
-        else if(ultimoSentido.equals(CAMINANDO_IZQUIERDA) && izquierdo.tipoColision != Tile.PASABLE){
+        } else if (ultimoSentido.equals(CAMINANDO_IZQUIERDA) && izquierdo.tipoColision != Tile.PASABLE) {
             nuevaRuta = true;
         }
 
-        if(nuevaRuta){
-            if(inferior.tipoColision != Tile.PASABLE)
+        if (nuevaRuta) {
+            if (inferior.tipoColision != Tile.PASABLE)
                 abajo = false;
-            if(superior.tipoColision != Tile.PASABLE)
+            if (superior.tipoColision != Tile.PASABLE)
                 arriba = false;
-            if(derecho.tipoColision != Tile.PASABLE)
+            if (derecho.tipoColision != Tile.PASABLE)
                 derecha = false;
-            if(izquierdo.tipoColision != Tile.PASABLE)
+            if (izquierdo.tipoColision != Tile.PASABLE)
                 izquierda = false;
             asignarSentidoOrientacion(arriba, abajo, derecha, izquierda);
         }
-
     }
 
 
-    public void asignarSentidoOrientacion(boolean arriba, boolean abajo, boolean derecha, boolean izquierda){
+    /**
+     * Método que calcula de forma aleatoria la nueva orientación y el nuevo sentido, de entre los posible
+     * según lo indique los parámetros, del enemigo
+     *
+     * @param arriba
+     * @param abajo
+     * @param derecha
+     * @param izquierda
+     */
+    public void asignarSentidoOrientacion(boolean arriba, boolean abajo, boolean derecha, boolean izquierda) {
         boolean encontrada = false;
         Random r = new Random();
-        while(!encontrada){
+        while (!encontrada) {
 
             int num = r.nextInt(4);
 
-            switch (num){
+            switch (num) {
                 case 0:
-                    if(arriba){
+                    if (arriba) {
                         sprite = sprites.get(CAMINANDO_ARRIBA);
                         ultimoSentido = CAMINANDO_ARRIBA;
                         orientacion = ARRIBA;
@@ -160,7 +171,7 @@ public class Enemigo extends Modelo{
                     }
                     break;
                 case 1:
-                    if(abajo){
+                    if (abajo) {
                         sprite = sprites.get(CAMINANDO_ABAJO);
                         ultimoSentido = CAMINANDO_ABAJO;
                         orientacion = ABAJO;
@@ -169,7 +180,7 @@ public class Enemigo extends Modelo{
                     }
                     break;
                 case 2:
-                    if(derecha){
+                    if (derecha) {
                         sprite = sprites.get(CAMINANDO_DERECHA);
                         ultimoSentido = CAMINANDO_DERECHA;
                         orientacion = DERECHA;
@@ -178,7 +189,7 @@ public class Enemigo extends Modelo{
                     }
                     break;
                 case 3:
-                    if(izquierda){
+                    if (izquierda) {
                         sprite = sprites.get(CAMINANDO_IZQUIERDA);
                         ultimoSentido = CAMINANDO_IZQUIERDA;
                         orientacion = IZQUIERDA;

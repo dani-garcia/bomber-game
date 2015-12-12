@@ -65,7 +65,7 @@ public class GameLoop extends Thread {
                             this.gameView.actualizar(FRAME_TIEMPO);
                             tiempoEspera += FRAME_TIEMPO;
                             framesSaltados++;
-                           // Log.v("GameLoop", "GameLoop - Frames saltados " + framesSaltados);
+                            // Log.v("GameLoop", "GameLoop - Frames saltados " + framesSaltados);
                         }
                     }
                 } finally {

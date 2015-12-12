@@ -144,7 +144,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             nivel.getJugadorTactil().ordenFinMovimientoAbajo();
             nivel.getJugadorTactil().ordenFinMovimientoArriba();
         }
-        if(!pulsacionBotonBomba) {
+        if (!pulsacionBotonBomba) {
             nivel.getJugadorTactil().ordenFinPonerBomba();
         }
     }

@@ -70,11 +70,11 @@ public class Jugador extends Modelo {
         inicializar();
     }
 
-    public double getX(){
+    public double getX() {
         return x;
     }
 
-    public double getY(){
+    public double getY() {
         return y;
     }
 
@@ -83,11 +83,11 @@ public class Jugador extends Modelo {
     }
 
     private void inicializar() {
-        sprites.put(CAMINANDO_DERECHA, Sprite.create(context, R.drawable.bman_right1 + (idJugador-1), ancho, altura, 12, 8, true));
-        sprites.put(CAMINANDO_IZQUIERDA, Sprite.create(context, R.drawable.bman_left1 + (idJugador-1), ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_DERECHA, Sprite.create(context, R.drawable.bman_right1 + (idJugador - 1), ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_IZQUIERDA, Sprite.create(context, R.drawable.bman_left1 + (idJugador - 1), ancho, altura, 12, 8, true));
 
-        sprites.put(CAMINANDO_ARRIBA, Sprite.create(context, R.drawable.bman_up1 + (idJugador-1), ancho, altura, 12, 8, true));
-        sprites.put(CAMINANDO_ABAJO, Sprite.create(context, R.drawable.bman_down1 + (idJugador-1), ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_ARRIBA, Sprite.create(context, R.drawable.bman_up1 + (idJugador - 1), ancho, altura, 12, 8, true));
+        sprites.put(CAMINANDO_ABAJO, Sprite.create(context, R.drawable.bman_down1 + (idJugador - 1), ancho, altura, 12, 8, true));
 
         // animación actual
         sprite = sprites.get(CAMINANDO_ABAJO);
@@ -99,22 +99,22 @@ public class Jugador extends Modelo {
             if (moverAbajo) {
                 movimiento = true;
                 aMover = Ar.alto(Tile.altura);
-                sprite =sprites.get(CAMINANDO_ABAJO);
+                sprite = sprites.get(CAMINANDO_ABAJO);
                 orientacion = ABAJO;
-            }else if (moverArriba){
+            } else if (moverArriba) {
                 movimiento = true;
                 aMover = Ar.alto(Tile.altura);
-                sprite =sprites.get(CAMINANDO_ARRIBA);
+                sprite = sprites.get(CAMINANDO_ARRIBA);
                 orientacion = ARRIBA;
             } else if (moverDerecha) {
                 movimiento = true;
                 aMover = Ar.ancho(Tile.ancho);
-                sprite =sprites.get(CAMINANDO_DERECHA);
+                sprite = sprites.get(CAMINANDO_DERECHA);
                 orientacion = DERECHA;
             } else if (moverIzquierda) {
                 movimiento = true;
                 aMover = Ar.ancho(Tile.ancho);
-                sprite =sprites.get(CAMINANDO_IZQUIERDA);
+                sprite = sprites.get(CAMINANDO_IZQUIERDA);
                 orientacion = IZQUIERDA;
             }
         }
@@ -142,7 +142,7 @@ public class Jugador extends Modelo {
     @Override
     protected void doDibujar(Canvas canvas) {
 //        sprite.dibujarSprite(canvas, (int) x, (int) y, msInmunidad > 0);
-        sprite.dibujarSprite(canvas, (int) x, (int) y -Tile.altura/2, false);
+        sprite.dibujarSprite(canvas, (int) x, (int) y - Tile.altura / 2, false);
     }
 
     public void restablecerPosicionInicial() {
@@ -158,6 +158,7 @@ public class Jugador extends Modelo {
         moverDerecha = false;
         moverIzquierda = false;
     }
+
     public void ordenFinMovimientoAbajo() {
         moverAbajo = false;
     }
@@ -168,6 +169,7 @@ public class Jugador extends Modelo {
         moverDerecha = false;
         moverIzquierda = false;
     }
+
     public void ordenFinMovimientoArriba() {
         moverArriba = false;
     }
@@ -179,6 +181,7 @@ public class Jugador extends Modelo {
         moverIzquierda = false;
 
     }
+
     public void ordenFinMovimientoDerecha() {
         moverDerecha = false;
     }
@@ -189,6 +192,7 @@ public class Jugador extends Modelo {
         moverDerecha = false;
         moverIzquierda = true;
     }
+
     public void ordenFinMovimientoIzquierda() {
         moverIzquierda = false;
     }
@@ -196,6 +200,7 @@ public class Jugador extends Modelo {
     public void ordenPonerBomba() {
         ponerBomba = true;
     }
+
     public void ordenFinPonerBomba() {
         ponerBomba = false;
     }

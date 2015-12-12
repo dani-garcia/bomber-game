@@ -8,7 +8,7 @@ import com.bombergame.graficos.Sprite;
 /**
  * Created by Cristian on 11/12/2015.
  */
-public class MejoraExplosion extends Mejora{
+public class MejoraExplosion extends Mejora {
     public MejoraExplosion(Context context, double x, double y) {
         super(context, x, y);
         tipo = Mejora.EXPLOSION;
