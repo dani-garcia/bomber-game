@@ -208,6 +208,7 @@ public class Nivel {
             for (Explosion explosion : explosiones) {
                 if (enemigo.colisiona(explosion)) {
                     iterator.remove();
+                    break;
                 }
             }
         }
