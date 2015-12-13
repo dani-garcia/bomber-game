@@ -2,7 +2,7 @@ package com.bombergame.controlesJugador;
 
 import com.bombergame.modelos.Jugador;
 
-public class PonerBomba implements ControladorJugaror{
+public class PonerBomba implements ControladorJugador {
     private Jugador jugador;
 
     public PonerBomba (Jugador jugador) {

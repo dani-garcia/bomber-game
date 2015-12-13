@@ -5,7 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bombergame.R;
-import com.bombergame.controlesJugador.ControladorJugaror;
+import com.bombergame.controlesJugador.ControladorJugador;
 import com.bombergame.controlesJugador.MoverJugadorAbajo;
 import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.controlesJugador.MoverJugadorDerecha;
@@ -45,7 +45,7 @@ public class GestorNiveles {
     //private Map<Integer, Point> iniciosJugadores;
     private Tile[][] mapaTiles;
 
-    private Map<Integer, ControladorJugaror> controladores;
+    private Map<Integer, ControladorJugador> controladores;
 
     private static GestorNiveles instancia = null;
 
@@ -88,7 +88,7 @@ public class GestorNiveles {
         return mapaTiles;
     }
 
-    public Map<Integer, ControladorJugaror> getControladores() {
+    public Map<Integer, ControladorJugador> getControladores() {
         return controladores;
     }
 
@@ -121,70 +121,22 @@ public class GestorNiveles {
 
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
-        XPathExpression expr = null;
-        NodeList nl = null;
+        XPathExpression expr;
+        NodeList nl;
         for (Jugador jugador : jugadores) {
             try {
                 expr = xpath.compile("//jugador[@id=\"" + jugador.getId() + "\"]");
                 nl = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-                Element elementoActual = (Element) nl.item(0);
-                controladores.put(
-                        Integer.parseInt(parser.getValor(elementoActual, "abajo"))
-                        , new MoverJugadorAbajo(jugador));
-                controladores.put(
-                        Integer.parseInt(parser.getValor(elementoActual, "arriba"))
-                        , new MoverJugadorArriba(jugador));
-                controladores.put(
-                        Integer.parseInt(parser.getValor(elementoActual, "derecha"))
-                        , new MoverJugadorDerecha(jugador));
-                controladores.put(
-                        Integer.parseInt(parser.getValor(elementoActual, "izquierda"))
-                        , new MoverJugadorIzquierda(jugador));
-                controladores.put(
-                        Integer.parseInt(parser.getValor(elementoActual, "ponerbomba"))
-                        , new PonerBomba(jugador));
-                Log.e("GESTORNIVELES", "numero de controladores: " + controladores.size());
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "abajo"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "arriba"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "derecha"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "izquierda"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "ponerbomba"));
+                Element item = (Element) nl.item(0);
+                controladores.put(parser.getInt(item, "abajo"), new MoverJugadorAbajo(jugador));
+                controladores.put(parser.getInt(item, "arriba"), new MoverJugadorArriba(jugador));
+                controladores.put(parser.getInt(item, "derecha"), new MoverJugadorDerecha(jugador));
+                controladores.put(parser.getInt(item, "izquierda"), new MoverJugadorIzquierda(jugador));
+                controladores.put(parser.getInt(item, "ponerbomba"), new PonerBomba(jugador));
             } catch (XPathExpressionException e) {
                 Log.e("GESTOR_NIVELES", e.getMessage());
             }
         }
-//        NodeList nodos = doc.getElementsByTagName("jugador");
-//        for (Jugador jugador : jugadores) {
-//            nodositem
-//        }
-//
-//        LinkedList<PowerUp> powerUps = new LinkedList<PowerUp>();
-//        NodeList nodos = doc.getElementsByTagName("powerup");
-//        for (int i = 0; i < nodos.getLength(); i++) {
-//            Element elementoActual = (Element) nodos.item(i);
-//            String type = parser.getValor(elementoActual, "type");
-//            String x = parser.getValor(elementoActual, "x");
-//            String y = parser.getValor(elementoActual, "y");
-//            powerUps.add(powerUpCreators.get(type).
-//                    create(context, Ar.x(Double.parseDouble(x)), Ar.y(Double.parseDouble(y))));
-//        }
-    }
-
-    private void comprobarNumeroJugadores(Context context) {
-//        if(jugadores.size() > numeroJugadores) {
-//            for (int i = numeroJugadores; i<jugadores.size();i++) {
-//                jugadores.remove(i);
-//            }
-//        }
-//        for (int i = 0;
-//             i < iniciosJugadores.size() && i < numeroJugadores;
-//             i++) {
-//            double xCentroAbajoTile = Ar.x(iniciosJugadores.get(i).x * Tile.ancho + Tile.ancho / 2);
-//            double yCentroAbajoTile = Ar.y(iniciosJugadores.get(i).y * Tile.altura + Tile.altura);
-//
-//            Jugador jugador = new Jugador(context, xCentroAbajoTile, yCentroAbajoTile, 1);
-//            jugadores.add(jugador);
-//        }
     }
 
     private void inicializarMapaTiles(Context context) {
@@ -225,10 +177,6 @@ public class GestorNiveles {
     }
 
     private Tile inicializarTile(Context context, char codigoTile, int x, int y) {
-        // Posicion centro abajo
-        //double xCentroAbajoTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
-        //double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura);
-
         switch (codigoTile) {
             case '1':
             case '2':

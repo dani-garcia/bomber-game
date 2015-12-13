@@ -1,6 +1,7 @@
 package com.bombergame.controlesJugador;
 
-public interface ControladorJugaror {
+public interface ControladorJugador {
     void keyDown();
+
     void keyUp();
 }
