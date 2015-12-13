@@ -39,6 +39,7 @@ public class Jugador extends Modelo {
     public int bombasLimite = 1;
     public int bombasColocadas;
     public int alcanceBombas = 1;
+    public int buffosVelodidad;
 
     private boolean moverArriba;
     private boolean moverAbajo;

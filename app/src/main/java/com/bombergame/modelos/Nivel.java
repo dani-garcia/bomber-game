@@ -120,7 +120,7 @@ public class Nivel {
                     int tileY = getTileYFromCoord(jugador.y);
 
                     // Nos movemos con la velocidad
-                    double paso = Math.min(jugador.aMover, jugador.velocidadMovimiento);
+                    double paso = Math.min(jugador.aMover, jugador.velocidadMovimiento + (jugador.buffosVelodidad*5));
                     jugador.aMover -= paso;
 
                     switch (jugador.orientacion) {
@@ -189,7 +189,7 @@ public class Nivel {
                             break;
 
                         case Mejora.VELOCIDAD_MOVIMIENTO:
-                            jugador.velocidadMovimiento += 5f;
+                            jugador.buffosVelodidad++;
                             break;
 
                         case Mejora.EXPLOSION:
