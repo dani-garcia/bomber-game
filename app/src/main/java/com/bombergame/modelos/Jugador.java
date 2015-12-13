@@ -30,46 +30,38 @@ public class Jugador extends Modelo {
     double xInicial;
     double yInicial;
 
-    public int orientacion;
+    public int orientacion = ABAJO;
 
     public double velocidadMovimiento = 5f;
     public double aMover;
     public boolean movimiento;
 
-    public int bombasLimite;
+    public int bombasLimite = 1;
     public int bombasColocadas;
-    public int velocidad;
-    public int alcanceBombas;
-    public boolean patearBombas;
-    public boolean explosionRemota;
+    public int alcanceBombas = 1;
 
     private boolean moverArriba;
     private boolean moverAbajo;
     private boolean moverIzquierda;
     private boolean moverDerecha;
     private boolean ponerBomba;
-    public boolean patearBomba;
-    public boolean explotarBombas;
+
+    private long msInmunidad;
+    private int vidas = VIDAS_INICIALES;
+    private static final int VIDAS_INICIALES = 3;
 
     private Marcador marcador;
 
     public Jugador(Context context, double xInicial, double yInicial, int idJugador) {
         super(context, xInicial, yInicial, Ar.ancho(115), Ar.alto(62));
+        this.xInicial = xInicial;
+        this.yInicial = yInicial;
+
+        this.idJugador = idJugador;
 
         cIzquierda = cDerecha = Ar.ancho(20);
         cArriba = Ar.alto(25);
         cAbajo = Ar.alto(25);
-
-        orientacion = ABAJO;
-
-        this.idJugador = idJugador;
-
-        bombasLimite = 1;
-        bombasColocadas = 0;
-        velocidad = 1;
-        alcanceBombas = 2;
-        patearBombas = false;
-        explosionRemota = false;
 
         inicializar();
     }
@@ -123,9 +115,13 @@ public class Jugador extends Modelo {
             }
         }
 
-        if (ponerBomba && bombasColocadas < bombasLimite) {
-            Bomba b = new Bomba(context, this, nivel);
-            nivel.bombas.add(b);
+        if (ponerBomba) {
+            ponerBomba = false;
+
+            if (bombasColocadas < bombasLimite) {
+                Bomba b = new Bomba(context, this, nivel);
+                nivel.bombas.add(b);
+            }
         }
     }
 
@@ -135,22 +131,34 @@ public class Jugador extends Modelo {
 
     @Override
     public void actualizar(long tiempo) {
-//        if (msInmunidad > 0) {
-//            msInmunidad -= tiempo;
-//        }
+        if (msInmunidad > 0) {
+            msInmunidad -= tiempo;
+        }
 
         if (movimiento)
             sprite.actualizar(tiempo);
     }
 
     public int golpeado() {
-        return 0;
+        if (msInmunidad > 0)
+            return vidas; // No se golpea
+
+        if (--vidas > 0) {
+            // Queda vidas
+            msInmunidad = 2000; // Dos segundos de inmunidad
+            restablecerPosicionInicial();
+        }
+
+        return vidas;
+    }
+
+    public int getVidas() {
+        return vidas;
     }
 
     @Override
     protected void doDibujar(Canvas canvas) {
-//        sprite.dibujarSprite(canvas, (int) x, (int) y, msInmunidad > 0);
-        sprite.dibujarSprite(canvas, (int) x, (int) y - Tile.altura / 2, false);
+        sprite.dibujarSprite(canvas, (int) x, (int) y - Tile.altura / 2, msInmunidad > 0);
         if (marcador != null) marcador.dibujar(canvas);
     }
 
