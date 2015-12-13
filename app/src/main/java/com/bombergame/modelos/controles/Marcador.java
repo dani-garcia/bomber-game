@@ -4,31 +4,74 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 
-import com.bombergame.GameView;
+import com.bombergame.R;
+import com.bombergame.gestores.CargadorGraficos;
+import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Modelo;
 
 public class Marcador extends Modelo {
 
-    private int puntos = 10;
-    private static final int textSize = 20;
+    private Jugador jugador;
+    private static final int textSize = 32;
+    private static final int smallIconsSize = 32;
+    private Drawable imagenBomba;
+    private Drawable imagenFuego;
+    private Drawable imagenVelocidad;
 
-    public Marcador(Context context) {
-        super(context, GameView.pantallaAncho * 0.9, GameView.pantallaAlto * 0.1, 30, 30);
-
+    public Marcador(Context context, double xIzquierda, double yArriba, Jugador jugador) {
+        super(context, xIzquierda, yArriba, 47, 47);
+        this.jugador = jugador;
+        this.imagen = CargadorGraficos.cargarDrawable(context,
+                R.drawable.icon_player_1 + (jugador.getId() - 1));
+        this.imagenBomba = CargadorGraficos.cargarDrawable(context,
+                R.drawable.icon_bomb);
+        this.imagenFuego = CargadorGraficos.cargarDrawable(context,
+                R.drawable.icon_flame);
+        this.imagenVelocidad = CargadorGraficos.cargarDrawable(context,
+                R.drawable.powerup_speed);
     }
 
     @Override
     protected void doDibujar(Canvas canvas) {
-        // Dibujamos la puntuacion
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setAntiAlias(true);
-        paint.setTextSize(textSize);
-        canvas.drawText(String.valueOf(puntos), (int) x + ancho, (int) y + (altura - textSize) / 2, paint);
-    }
+        int xOrigenImagen = (int) x;
+        int yOrigenImagen = (int) y;
+        Paint formatoTexto = new Paint();
+        formatoTexto.setColor(Color.WHITE);
+        formatoTexto.setAntiAlias(true);
+        formatoTexto.setTextSize(textSize);
 
-    public void setPuntos(int puntos) {
-        this.puntos = puntos;
+        imagen.setBounds(xOrigenImagen, yOrigenImagen,
+                xOrigenImagen + ancho, yOrigenImagen + altura);
+        imagen.draw(canvas);
+
+        xOrigenImagen = xOrigenImagen + ancho + (smallIconsSize / 5);
+        yOrigenImagen = yOrigenImagen + ((altura - smallIconsSize) / 2);
+        imagenBomba.setBounds(xOrigenImagen, yOrigenImagen,
+                xOrigenImagen + smallIconsSize, yOrigenImagen + smallIconsSize);
+        imagenBomba.draw(canvas);
+        xOrigenImagen = xOrigenImagen + smallIconsSize + (smallIconsSize / 4);
+        canvas.drawText(String.valueOf(jugador.bombasLimite), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
+
+        xOrigenImagen = xOrigenImagen + smallIconsSize;
+        imagenFuego.setBounds(xOrigenImagen, yOrigenImagen,
+                xOrigenImagen + smallIconsSize, yOrigenImagen + smallIconsSize);
+        imagenFuego.draw(canvas);
+        xOrigenImagen = xOrigenImagen + smallIconsSize + (smallIconsSize / 4);
+        canvas.drawText(String.valueOf(jugador.alcanceBombas), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
+
+        xOrigenImagen = xOrigenImagen + smallIconsSize;
+        imagenVelocidad.setBounds(xOrigenImagen, yOrigenImagen,
+                xOrigenImagen + smallIconsSize, yOrigenImagen + smallIconsSize);
+        imagenVelocidad.draw(canvas);
+        xOrigenImagen = xOrigenImagen + smallIconsSize + (smallIconsSize / 4);
+        canvas.drawText(String.valueOf(jugador.velocidad), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
+//        // Dibujamos la puntuacion
+//        Paint paint = new Paint();
+//        paint.setColor(Color.WHITE);
+//        paint.setAntiAlias(true);
+//        paint.setTextSize(textSize);
+//        canvas.drawText(String.valueOf(jugador.bombasLimite), (int) x + ancho, (int) y + (altura - textSize) / 2, paint);
     }
 }

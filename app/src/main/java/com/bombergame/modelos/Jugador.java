@@ -3,9 +3,11 @@ package com.bombergame.modelos;
 import android.content.Context;
 import android.graphics.Canvas;
 
+import com.bombergame.GameView;
 import com.bombergame.R;
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
+import com.bombergame.modelos.controles.Marcador;
 
 import java.util.HashMap;
 
@@ -48,6 +50,8 @@ public class Jugador extends Modelo {
     private boolean ponerBomba;
     public boolean patearBomba;
     public boolean explotarBombas;
+
+    private Marcador marcador;
 
     public Jugador(Context context, double xInicial, double yInicial, int idJugador) {
         super(context, xInicial, yInicial, Ar.ancho(115), Ar.alto(62));
@@ -125,6 +129,10 @@ public class Jugador extends Modelo {
         }
     }
 
+    public void setMarcador(Marcador marcador) {
+        this.marcador = marcador;
+    }
+
     @Override
     public void actualizar(long tiempo) {
 //        if (msInmunidad > 0) {
@@ -143,6 +151,7 @@ public class Jugador extends Modelo {
     protected void doDibujar(Canvas canvas) {
 //        sprite.dibujarSprite(canvas, (int) x, (int) y, msInmunidad > 0);
         sprite.dibujarSprite(canvas, (int) x, (int) y - Tile.altura / 2, false);
+        if (marcador != null) marcador.dibujar(canvas);
     }
 
     public void restablecerPosicionInicial() {

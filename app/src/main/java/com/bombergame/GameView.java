@@ -70,7 +70,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);
 
-        Log.e("GAMEVIEW", "numero de controladores:" + controladores.keySet().size());
 
 //        controladores = new HashMap<>();
 //        controladores.put(KeyEvent.KEYCODE_W, new MoverJugadorArriba(nivel.getJugadores().get(0)));

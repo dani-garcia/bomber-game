@@ -4,6 +4,7 @@ package com.bombergame.gestores;
 import android.content.Context;
 import android.util.Log;
 
+import com.bombergame.GameView;
 import com.bombergame.R;
 import com.bombergame.controlesJugador.ControladorJugaror;
 import com.bombergame.controlesJugador.MoverJugadorAbajo;
@@ -15,6 +16,7 @@ import com.bombergame.graficos.Ar;
 import com.bombergame.modelos.Enemigo;
 import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Tile;
+import com.bombergame.modelos.controles.Marcador;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,6 +43,8 @@ public class GestorNiveles {
     private List<Enemigo> enemigos;
     private int numeroJugadores = 1;
     private int nivelActual = 1;
+
+    private double[][] posicionesMarcadores;
 
     //private Map<Integer, Point> iniciosJugadores;
     private Tile[][] mapaTiles;
@@ -93,6 +97,13 @@ public class GestorNiveles {
     }
 
     public void cargarDatosNivel(Context context) {
+        posicionesMarcadores = new double [][] {
+                {GameView.pantallaAncho * 0.02, GameView.pantallaAlto * 0.01},
+                {GameView.pantallaAncho * 0.80, GameView.pantallaAlto * 0.01},
+                {GameView.pantallaAncho * 0.01, GameView.pantallaAlto * 0.93},
+                {GameView.pantallaAncho * 0.80, GameView.pantallaAlto * 0.93}
+        };
+
         jugadores = new LinkedList<>();
         enemigos = new LinkedList<>();
         controladores = new HashMap<>();
@@ -143,48 +154,10 @@ public class GestorNiveles {
                 controladores.put(
                         Integer.parseInt(parser.getValor(elementoActual, "ponerbomba"))
                         , new PonerBomba(jugador));
-                Log.e("GESTORNIVELES", "numero de controladores: " + controladores.size());
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "abajo"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "arriba"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "derecha"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "izquierda"));
-//                Log.e("GESTORNIVELES", "---- botón:" + parser.getValor(elementoActual, "ponerbomba"));
             } catch (XPathExpressionException e) {
                 Log.e("GESTOR_NIVELES", e.getMessage());
             }
         }
-//        NodeList nodos = doc.getElementsByTagName("jugador");
-//        for (Jugador jugador : jugadores) {
-//            nodositem
-//        }
-//
-//        LinkedList<PowerUp> powerUps = new LinkedList<PowerUp>();
-//        NodeList nodos = doc.getElementsByTagName("powerup");
-//        for (int i = 0; i < nodos.getLength(); i++) {
-//            Element elementoActual = (Element) nodos.item(i);
-//            String type = parser.getValor(elementoActual, "type");
-//            String x = parser.getValor(elementoActual, "x");
-//            String y = parser.getValor(elementoActual, "y");
-//            powerUps.add(powerUpCreators.get(type).
-//                    create(context, Ar.x(Double.parseDouble(x)), Ar.y(Double.parseDouble(y))));
-//        }
-    }
-
-    private void comprobarNumeroJugadores(Context context) {
-//        if(jugadores.size() > numeroJugadores) {
-//            for (int i = numeroJugadores; i<jugadores.size();i++) {
-//                jugadores.remove(i);
-//            }
-//        }
-//        for (int i = 0;
-//             i < iniciosJugadores.size() && i < numeroJugadores;
-//             i++) {
-//            double xCentroAbajoTile = Ar.x(iniciosJugadores.get(i).x * Tile.ancho + Tile.ancho / 2);
-//            double yCentroAbajoTile = Ar.y(iniciosJugadores.get(i).y * Tile.altura + Tile.altura);
-//
-//            Jugador jugador = new Jugador(context, xCentroAbajoTile, yCentroAbajoTile, 1);
-//            jugadores.add(jugador);
-//        }
     }
 
     private void inicializarMapaTiles(Context context) {
@@ -225,9 +198,6 @@ public class GestorNiveles {
     }
 
     private Tile inicializarTile(Context context, char codigoTile, int x, int y) {
-        // Posicion centro abajo
-        //double xCentroAbajoTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
-        //double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura);
 
         switch (codigoTile) {
             case '1':
@@ -236,10 +206,17 @@ public class GestorNiveles {
             case '4':
                 int tileNumeric = Character.getNumericValue(codigoTile);
                 if (tileNumeric <= numeroJugadores) {
-                    double xCentroAbajoTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
-                    double yCentroAbajoTile = Ar.y(y * Tile.altura + Tile.altura / 2);
+                    double xCentroTile = Ar.x(x * Tile.ancho + Tile.ancho / 2);
+                    double yCentroTile = Ar.y(y * Tile.altura + Tile.altura / 2);
 
-                    jugadores.add(new Jugador(context, xCentroAbajoTile, yCentroAbajoTile, tileNumeric));
+                    Jugador jugador = new Jugador(context, xCentroTile, yCentroTile, tileNumeric);
+                    jugador.setMarcador(
+                            new Marcador(context,
+                                    posicionesMarcadores[tileNumeric-1][0],
+                                    posicionesMarcadores[tileNumeric-1][1],
+                                    jugador));
+                    jugadores.add(jugador);
+
                 }
                 return Tile.VACIO;
 
