@@ -8,6 +8,7 @@ import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
 import com.bombergame.modelos.mejoras.Mejora;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class Nivel {
 
             Bomba bombaEliminar = null;
             for (Bomba b : bombas) {
-                if (b.estado == b.INACTIVA)
+                if (b.estado == Bomba.INACTIVA)
                     bombaEliminar = b;
                 else
                     b.actualizar(tiempo);
@@ -94,17 +95,11 @@ public class Nivel {
                 explosiones.remove(e);
             }
 
-            List<Mejora> mejorasEliminar = new LinkedList<>();
-            for (Mejora m : mejoras) {
-                if (m.estado == Mejora.COGIDA) {
-                    mejorasEliminar.add(m);
-                }
-            }
-            for (Mejora m : mejorasEliminar) {
-                mejoras.remove(m);
-            }
-
             aplicarReglasMovimiento();
+
+            comprobarColisiones();
+
+            comprobarVictoria();
         }
     }
 
@@ -159,6 +154,70 @@ public class Nivel {
         }
     }
 
+    private void comprobarColisiones() {
+        for (Iterator<Jugador> iterator = jugadores.iterator(); iterator.hasNext(); ) {
+            Jugador jugador = iterator.next();
+
+            // Con enemigo
+            for (Enemigo enemigo : enemigos) {
+                if (jugador.colisiona(enemigo)) {
+                    jugador.golpeado();
+                }
+            }
+
+            // Con explosion
+            for (Explosion explosion : explosiones) {
+                if (jugador.colisiona(explosion)) {
+                    jugador.golpeado();
+                }
+            }
+
+            // Si el jugador ha muerto, lo eliminamos
+            if (jugador.getVidas() <= 0)
+                iterator.remove();
+
+            // Con mejoras
+            for (Iterator<Mejora> iterMejoras = mejoras.iterator(); iterMejoras.hasNext(); ) {
+                Mejora mejora = iterMejoras.next();
+
+                if (jugador.colisiona(mejora)) {
+                    // TODO Efecto temporal en vez de permanente?
+                    
+                    switch (mejora.tipo) {
+                        case Mejora.BOMBA:
+                            jugador.bombasLimite++;
+                            break;
+
+                        case Mejora.VELOCIDAD_MOVIMIENTO:
+                            jugador.velocidadMovimiento += 5f;
+                            break;
+
+                        case Mejora.EXPLOSION:
+                            jugador.alcanceBombas++;
+                            break;
+                    }
+
+                    iterMejoras.remove();
+                }
+            }
+        }
+
+        for (Iterator<Enemigo> iterator = enemigos.iterator(); iterator.hasNext(); ) {
+            Enemigo enemigo = iterator.next();
+
+            for (Explosion explosion : explosiones) {
+                if (enemigo.colisiona(explosion)) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    private void comprobarVictoria() {
+        // TODO Si no quedan enemigos y solo un jugador, ha ganado
+
+        // TODO Si no quedan jugadores, se ha perdido
+    }
 
     public void dibujar(Canvas canvas) {
         if (inicializado) {
@@ -182,9 +241,6 @@ public class Nivel {
             for (Enemigo enemigo : enemigos) {
                 enemigo.dibujar(canvas);
             }
-
-
-            // Lo demas
         }
     }
 

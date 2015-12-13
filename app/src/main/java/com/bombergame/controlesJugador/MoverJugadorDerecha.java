@@ -2,7 +2,7 @@ package com.bombergame.controlesJugador;
 
 import com.bombergame.modelos.Jugador;
 
-public class MoverJugadorDerecha implements ControladorJugaror{
+public class MoverJugadorDerecha implements ControladorJugador {
     private Jugador jugador;
     public MoverJugadorDerecha(Jugador jugador) {
         this.jugador = jugador;

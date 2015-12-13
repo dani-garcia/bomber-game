@@ -49,6 +49,10 @@ public class ParserXML {
         return this.getValorDelElemento(n.item(0));
     }
 
+    public int getInt(Element item, String str) {
+        return Integer.parseInt(getValor(item, str));
+    }
+
     public final String getValorDelElemento(Node elem) {
         Node child;
         if (elem != null) {
