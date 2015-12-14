@@ -67,11 +67,5 @@ public class Marcador extends Modelo {
         imagenVelocidad.draw(canvas);
         xOrigenImagen = xOrigenImagen + smallIconsSize + (smallIconsSize / 4);
         canvas.drawText(String.valueOf(jugador.buffosVelodidad), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
-//        // Dibujamos la puntuacion
-//        Paint paint = new Paint();
-//        paint.setColor(Color.WHITE);
-//        paint.setAntiAlias(true);
-//        paint.setTextSize(textSize);
-//        canvas.drawText(String.valueOf(jugador.bombasLimite), (int) x + ancho, (int) y + (altura - textSize) / 2, paint);
     }
 }

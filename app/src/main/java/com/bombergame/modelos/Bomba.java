@@ -2,13 +2,16 @@ package com.bombergame.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.bombergame.R;
-import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
+import com.bombergame.modelos.mejoras.MejoraBomba;
+import com.bombergame.modelos.mejoras.MejoraExplosion;
+import com.bombergame.modelos.mejoras.MejoraVelocidad;
 
-import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Cristian on 08/12/2015.
@@ -24,7 +27,7 @@ public class Bomba extends Modelo {
     public static int PUESTA = 0;
     public int estado;
     public Nivel nivel;
-    private int duracionBomba = 3000;
+    public int duracionBomba = 3000;
     long tiempoPuesta;
 
 
@@ -65,62 +68,49 @@ public class Bomba extends Modelo {
         int tileX = nivel.getTileXFromCoord(x);
         int tileY = nivel.getTileYFromCoord(y);
         nivel.explosiones.add(new Explosion(context, x, y, nivel)); //Esta explosión es donde se pone la bomba, por lo tanto siempre se crea
-        generarExplosionesEjeXPositivo(tileX, tileY);
-        generarExplosionesEjeXNegativo(tileX, tileY);
-        generarExplosionesEjeYPositivo(tileX, tileY);
-        generaExplosionesEjeYNegativo(tileX, tileY);
+        generarExplosionesEnEje(tileX, tileY, 1, 0);
+        generarExplosionesEnEje(tileX, tileY, -1, 0);
+        generarExplosionesEnEje(tileX, tileY, 0, 1);
+        generarExplosionesEnEje(tileX, tileY, 0, -1);
 
     }
 
-    private void generarExplosionesEjeXPositivo(int tileX, int tileY) {
-        boolean existeMuro = false;
-        for (int i = 1; i <= jugador.alcanceBombas; i++) { //Se recorre el eje X tantas casillas a la derecha como lo indique el alcance del jugador
-            if (!existeMuro && nivel.getMapaTiles()[tileX + i][tileY].tipoColision == Tile.PASABLE) {//Si es una casilla pasable y para llegar a ella no
-                nivel.explosiones.add(new Explosion(context, x + Tile.ancho * i, y, nivel));        //existe ningún muro por el medio, generamos la explosion
-            } else {                                                                                //de forma normal. Si no es un tile pasable, comprobamos si es destruible
-                if (!existeMuro && nivel.getMapaTiles()[tileX + i][tileY].tipoColision == Tile.DESTRUIBLE)  //y, si es así, se crea una explosion que va a destruir el bloque y generar una mejora.
-                    nivel.explosiones.add(new Explosion(context, x + Tile.ancho * i, y, nivel, Explosion.EXPLOTANDO_DESTRUIBLE));//Si no es un tile ni pasable ni destruible, es de tipo muro y no hay explosión
-                existeMuro = true;
+    private void generarExplosionesEnEje(int xTileOrigen, int yTileOrigen, int xAxisOffset, int yAxisOffset) {
+        boolean muroEncontrado = false;
+
+        for (int i = 1; i <= jugador.alcanceBombas && muroEncontrado == false; i++) {
+            int xTile = xTileOrigen + xAxisOffset * i;
+            int yTile = yTileOrigen + yAxisOffset * i;
+            double xCoord = Ar.x((xTile * Tile.ancho) + Tile.ancho / 2);
+            double yCoord = Ar.y((yTile * Tile.altura) + Tile.altura / 2);
+            Log.e("BOMBA", "Comprobando explosión en Tile: (" + xTile + ", " + yTile+ "), coords: (" + xCoord + ", " + yCoord + ")");
+            Tile nextTileChecked = nivel.getMapaTiles()[xTile][yTile];
+            if (nextTileChecked.tipoColision == Tile.PASABLE) {
+                nivel.explosiones.add(new Explosion(context, xCoord, yCoord, nivel));
+            } else if (nextTileChecked.tipoColision == Tile.DESTRUIBLE) {
+                muroEncontrado = true;
+                nivel.getMapaTiles()[xTile][yTile] = Tile.VACIO;
+                generarMejora(xCoord, yCoord);
+            } else {
+                muroEncontrado = true;
             }
         }
     }
 
-    private void generarExplosionesEjeXNegativo(int tileX, int tileY) {
-        boolean existeMuro = false;
-        for (int i = 1; i <= jugador.alcanceBombas; i++) { //Se recorre el eje X tantas casillas a la izquierda como lo indique el alcance del jugador
-            if (!existeMuro && nivel.getMapaTiles()[tileX - i][tileY].tipoColision == Tile.PASABLE) {
-                nivel.explosiones.add(new Explosion(context, x - Tile.ancho * i, y, nivel));
-            } else {
-                if (!existeMuro && nivel.getMapaTiles()[tileX - i][tileY].tipoColision == Tile.DESTRUIBLE)
-                    nivel.explosiones.add(new Explosion(context, x - Tile.ancho * i, y, nivel, Tile.DESTRUIBLE));
-                existeMuro = true;
-            }
-        }
-    }
-
-    private void generarExplosionesEjeYPositivo(int tileX, int tileY) {
-        boolean existeMuro = false;
-        for (int i = 1; i <= jugador.alcanceBombas; i++) { //Se recorre el eje Y tantas casillas hacia arriba como lo indique el alcance del jugador
-            if (!existeMuro && nivel.getMapaTiles()[tileX][tileY + i].tipoColision == Tile.PASABLE) {
-                nivel.explosiones.add(new Explosion(context, x, y + Tile.altura * i, nivel));
-            } else {
-                if (!existeMuro && nivel.getMapaTiles()[tileX][tileY + i].tipoColision == Tile.DESTRUIBLE)
-                    nivel.explosiones.add(new Explosion(context, x, y + Tile.altura * i, nivel, Tile.DESTRUIBLE));
-                existeMuro = true;
-            }
-        }
-    }
-
-    private void generaExplosionesEjeYNegativo(int tileX, int tileY) {
-        boolean existeMuro = false;
-        for (int i = 1; i <= jugador.alcanceBombas; i++) { //Se recorre el eje Y tantas casillas a abajo como lo indique el alcance del jugador
-            if (!existeMuro && nivel.getMapaTiles()[tileX][tileY - i].tipoColision == Tile.PASABLE) {
-                nivel.explosiones.add(new Explosion(context, x, y - Tile.altura * i, nivel));
-            } else {
-                if (!existeMuro && nivel.getMapaTiles()[tileX][tileY - i].tipoColision == Tile.DESTRUIBLE)
-                    nivel.explosiones.add(new Explosion(context, x, y - Tile.altura * i, nivel, Tile.DESTRUIBLE));
-                existeMuro = true;
-            }
+    private void generarMejora(double x, double y) {
+        Random r = new Random();
+        int probabilidadNoMejora = 8; //A MAYOR probabilidad MENOR probabilidad hay de que al destruir un bloque salga una mejora
+        int n = r.nextInt(probabilidadNoMejora);
+        switch (n) {
+            case 0:
+                nivel.mejoras.add(new MejoraBomba(context, x, y));
+                break;
+            case 1:
+                nivel.mejoras.add(new MejoraExplosion(context, x, y));
+                break;
+            case 2:
+                nivel.mejoras.add(new MejoraVelocidad(context, x, y));
+                break;
         }
     }
 }

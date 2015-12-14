@@ -3,7 +3,6 @@ package com.bombergame.modelos;
 import android.content.Context;
 import android.graphics.Canvas;
 
-import com.bombergame.GameView;
 import com.bombergame.R;
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
@@ -120,8 +119,11 @@ public class Jugador extends Modelo {
             ponerBomba = false;
 
             if (bombasColocadas < bombasLimite) {
-                Bomba b = new Bomba(context, this, nivel);
-                nivel.bombas.add(b);
+                if (nivel.getBombaEnCoords(x, y) == null) {
+                    Bomba b = new Bomba(context, this, nivel);
+                    nivel.bombas.add(b);
+                    nivel.addBombaEnTile(b);
+                }
             }
         }
     }
@@ -171,24 +173,28 @@ public class Jugador extends Modelo {
                 int tileY = nivel.getTileYFromCoord(y);
 
                 // Nos movemos con la velocidad
-                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelodidad*5));
+                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelodidad * 5));
                 aMover -= paso;
 
                 switch (orientacion) {
                     case Jugador.ARRIBA:
-                        if (nivel.getMapaTiles()[tileX][tileY - 1].tipoColision == Tile.PASABLE)
+                        if (nivel.getMapaTiles()[tileX][tileY - 1].tipoColision == Tile.PASABLE &&
+                                nivel.getBombaEnTile(tileX, tileY - 1) == null)
                             y -= paso;
                         break;
                     case Jugador.ABAJO:
-                        if (nivel.getMapaTiles()[tileX][tileY + 1].tipoColision == Tile.PASABLE)
+                        if (nivel.getMapaTiles()[tileX][tileY + 1].tipoColision == Tile.PASABLE &&
+                                nivel.getBombaEnTile(tileX, tileY + 1) == null)
                             y += paso;
                         break;
                     case Jugador.IZQUIERDA:
-                        if (nivel.getMapaTiles()[tileX - 1][tileY].tipoColision == Tile.PASABLE)
+                        if (nivel.getMapaTiles()[tileX - 1][tileY].tipoColision == Tile.PASABLE &&
+                                nivel.getBombaEnTile(tileX - 1, tileY) == null)
                             x -= paso;
                         break;
                     case Jugador.DERECHA:
-                        if (nivel.getMapaTiles()[tileX + 1][tileY].tipoColision == Tile.PASABLE)
+                        if (nivel.getMapaTiles()[tileX + 1][tileY].tipoColision == Tile.PASABLE &&
+                                nivel.getBombaEnTile(tileX + 1, tileY) == null)
                             x += paso;
                         break;
                 }

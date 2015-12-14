@@ -25,6 +25,8 @@ public class Nivel {
     public boolean inicializado;
 
     public List<Bomba> bombas;
+    public Bomba[][] bombasAux;
+
     public List<Explosion> explosiones;
 
     public List<Jugador> getJugadores() {
@@ -67,6 +69,7 @@ public class Nivel {
     public void inicializar() throws Exception {
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         bombas = new LinkedList<>();
+        bombasAux = new Bomba[mapaTiles.length][mapaTiles[0].length];
         explosiones = new LinkedList<>();
         mejoras = new LinkedList<>();
         mensajeVictoria = CargadorGraficos.cargarBitmap(context, R.drawable.victoria);
@@ -91,21 +94,21 @@ public class Nivel {
                 if(bomba.estado != Bomba.INACTIVA)
                     bomba.actualizar(tiempo);
                 else {
+                    removeBombaEnTile(bomba);
                     iterator.remove();
                     continue;
                 }
             }
 
-            List<Explosion> explosionesEliminar = new LinkedList<>();
-            for (Explosion e : explosiones) {
-                if (e.estado == Explosion.FIN_EXPLOSION) {
-                    explosionesEliminar.add(e);
+            for (Iterator<Explosion> iterator = explosiones.iterator(); iterator.hasNext();){
+                Explosion explosion = iterator.next();
+
+                if ( explosion.estado == Explosion.INACTIVA) {
+                    iterator.remove();
+                    continue;
                 } else {
-                    e.actualizar(tiempo);
+                    explosion.actualizar(tiempo);
                 }
-            }
-            for (Explosion e : explosionesEliminar) {
-                explosiones.remove(e);
             }
 
             aplicarReglasMovimiento();
@@ -161,6 +164,30 @@ public class Nivel {
             }
         }
 
+        for (Explosion explosion : explosiones) {
+
+            for (Iterator<Enemigo> iterator = enemigos.iterator(); iterator.hasNext(); ) {
+                Enemigo enemigo = iterator.next();
+                if (enemigo.colisiona(explosion)) {
+                    iterator.remove();
+                    continue;
+                }
+
+            }
+
+            for( Iterator<AbstractMejora> iterator = mejoras.iterator(); iterator.hasNext();) {
+                AbstractMejora mejora = iterator.next();
+                if(mejora.colisiona(explosion)) {
+                    iterator.remove();
+                    continue;
+                }
+            }
+            Bomba bomba = getBombaEnCoords(explosion.x, explosion.y);
+            if (bomba != null) {
+                bomba.tiempoPuesta = System.currentTimeMillis() - bomba.duracionBomba;
+            }
+
+        }
         for (Iterator<Enemigo> iterator = enemigos.iterator(); iterator.hasNext(); ) {
             Enemigo enemigo = iterator.next();
 
@@ -247,5 +274,33 @@ public class Nivel {
     private int altoMapaTiles() {
         return mapaTiles[0].length;
     }
+
+    public void removeBombaEnTile(Bomba bomba) {
+        int xTile = getTileXFromCoord(bomba.x);
+        int yTile = getTileYFromCoord(bomba.y);
+
+        bombasAux[xTile][yTile] = null;
+    }
+
+    public void addBombaEnTile(Bomba bomba) {
+        int xTile = getTileXFromCoord(bomba.x);
+        int yTile = getTileYFromCoord(bomba.y);
+
+        bombasAux[xTile][yTile] = bomba;
+    }
+
+    public Bomba getBombaEnCoords(double xCoord, double yCoord) {
+        int xTile = getTileXFromCoord(xCoord);
+        int yTile = getTileYFromCoord(yCoord);
+
+        return getBombaEnTile(xTile, yTile);
+    }
+
+    public Bomba getBombaEnTile(int xTile, int yTile) {
+
+        return bombasAux[xTile][yTile];
+    }
+
+
 }
 
