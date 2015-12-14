@@ -4,10 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 
 import com.bombergame.R;
-import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
-import com.bombergame.modelos.mejoras.Mejora;
 import com.bombergame.modelos.mejoras.MejoraBomba;
 import com.bombergame.modelos.mejoras.MejoraExplosion;
 import com.bombergame.modelos.mejoras.MejoraVelocidad;

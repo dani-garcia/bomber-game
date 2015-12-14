@@ -140,17 +140,17 @@ public class Jugador extends Modelo {
             sprite.actualizar(tiempo);
     }
 
-    public int golpeado() {
-        if (msInmunidad > 0)
-            return vidas; // No se golpea
+    public void golpeado() {
+        // Si no es inmune
+        if (msInmunidad <= 0) {
+            vidas--;
 
-        if (--vidas > 0) {
-            // Queda vidas
-            msInmunidad = 2000; // Dos segundos de inmunidad
-            restablecerPosicionInicial();
+            // Quedan vidas
+            if (vidas > 0) {
+                msInmunidad = 2000; // Dos segundos de inmunidad
+                restablecerPosicionInicial();
+            }
         }
-
-        return vidas;
     }
 
     public int getVidas() {
@@ -161,6 +161,47 @@ public class Jugador extends Modelo {
     protected void doDibujar(Canvas canvas) {
         sprite.dibujarSprite(canvas, (int) x, (int) y - Tile.altura / 2, msInmunidad > 0);
         if (marcador != null) marcador.dibujar(canvas);
+    }
+
+
+    public void aplicarReglasDeMovimiento(Nivel nivel) {
+        if (movimiento) {
+            if (aMover > 0) {
+                int tileX = nivel.getTileXFromCoord(x);
+                int tileY = nivel.getTileYFromCoord(y);
+
+                // Nos movemos con la velocidad
+                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelodidad*5));
+                aMover -= paso;
+
+                switch (orientacion) {
+                    case Jugador.ARRIBA:
+                        if (nivel.getMapaTiles()[tileX][tileY - 1].tipoColision == Tile.PASABLE)
+                            y -= paso;
+                        break;
+                    case Jugador.ABAJO:
+                        if (nivel.getMapaTiles()[tileX][tileY + 1].tipoColision == Tile.PASABLE)
+                            y += paso;
+                        break;
+                    case Jugador.IZQUIERDA:
+                        if (nivel.getMapaTiles()[tileX - 1][tileY].tipoColision == Tile.PASABLE)
+                            x -= paso;
+                        break;
+                    case Jugador.DERECHA:
+                        if (nivel.getMapaTiles()[tileX + 1][tileY].tipoColision == Tile.PASABLE)
+                            x += paso;
+                        break;
+                }
+
+                // Se acabo el movimiento
+            } else {
+                movimiento = false;
+
+                // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
+                x = Ar.x(nivel.getTileXFromCoord(x) * Tile.ancho + Tile.ancho / 2);
+                y = Ar.y(nivel.getTileYFromCoord(y) * Tile.altura + Tile.altura / 2);
+            }
+        }
     }
 
     public void restablecerPosicionInicial() {

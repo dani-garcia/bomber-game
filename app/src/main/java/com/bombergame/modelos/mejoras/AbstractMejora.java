@@ -5,12 +5,10 @@ import android.graphics.Canvas;
 
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
+import com.bombergame.modelos.Jugador;
 import com.bombergame.modelos.Modelo;
 
-/**
- * Created by Cristian on 11/12/2015.
- */
-public abstract class Mejora extends Modelo {
+public abstract class AbstractMejora extends Modelo{
 
     protected Sprite sprite;
 
@@ -19,12 +17,13 @@ public abstract class Mejora extends Modelo {
     public static final int EXPLOSION = 2;
     public static final int VELOCIDAD_MOVIMIENTO = 3;
 
-    public Mejora(Context context, double x, double y) {
+    public AbstractMejora(Context context, double x, double y) {
         super(context, x, y, Ar.ancho(58), Ar.alto(58));
         setSprite();
     }
 
-    public abstract void setSprite();
+    protected abstract void setSprite();
+    public abstract void mejorar(Jugador jugador);
 
     @Override
     protected void doDibujar(Canvas canvas) {

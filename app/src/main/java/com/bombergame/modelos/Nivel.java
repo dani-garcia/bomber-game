@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import com.bombergame.R;
 import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
-import com.bombergame.modelos.mejoras.Mejora;
+import com.bombergame.modelos.mejoras.AbstractMejora;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,7 +39,7 @@ public class Nivel {
 
     private List<Jugador> jugadores;
     private List<Enemigo> enemigos;
-    public List<Mejora> mejoras;
+    public List<AbstractMejora> mejoras;
 
     public Nivel(Context context, int numeroNivel, Tile[][] mapaTiles, List<Jugador> jugadores, List<Enemigo> enemigos) throws Exception {
         inicializado = false;
@@ -73,15 +73,15 @@ public class Nivel {
                 enemigo.actualizar(tiempo);
             }
 
-            Bomba bombaEliminar = null;
-            for (Bomba b : bombas) {
-                if (b.estado == Bomba.INACTIVA)
-                    bombaEliminar = b;
-                else
-                    b.actualizar(tiempo);
+            for (Iterator<Bomba> iterator = bombas.iterator(); iterator.hasNext(); ) {
+                Bomba bomba = iterator.next();
+                if(bomba.estado != Bomba.INACTIVA)
+                    bomba.actualizar(tiempo);
+                else {
+                    iterator.remove();
+                    continue;
+                }
             }
-
-            bombas.remove(bombaEliminar);
 
             List<Explosion> explosionesEliminar = new LinkedList<>();
             for (Explosion e : explosiones) {
@@ -114,43 +114,7 @@ public class Nivel {
     private void aplicarReglasMovimiento() {
         // Jugador
         for (Jugador jugador : jugadores) {
-            if (jugador.movimiento) {
-                if (jugador.aMover > 0) {
-                    int tileX = getTileXFromCoord(jugador.x);
-                    int tileY = getTileYFromCoord(jugador.y);
-
-                    // Nos movemos con la velocidad
-                    double paso = Math.min(jugador.aMover, jugador.velocidadMovimiento + (jugador.buffosVelodidad*5));
-                    jugador.aMover -= paso;
-
-                    switch (jugador.orientacion) {
-                        case Jugador.ARRIBA:
-                            if (mapaTiles[tileX][tileY - 1].tipoColision == Tile.PASABLE)
-                                jugador.y -= paso;
-                            break;
-                        case Jugador.ABAJO:
-                            if (mapaTiles[tileX][tileY + 1].tipoColision == Tile.PASABLE)
-                                jugador.y += paso;
-                            break;
-                        case Jugador.IZQUIERDA:
-                            if (mapaTiles[tileX - 1][tileY].tipoColision == Tile.PASABLE)
-                                jugador.x -= paso;
-                            break;
-                        case Jugador.DERECHA:
-                            if (mapaTiles[tileX + 1][tileY].tipoColision == Tile.PASABLE)
-                                jugador.x += paso;
-                            break;
-                    }
-
-                    // Se acabo el movimiento
-                } else {
-                    jugador.movimiento = false;
-
-                    // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
-                    jugador.x = Ar.x(getTileXFromCoord(jugador.x) * Tile.ancho + Tile.ancho / 2);
-                    jugador.y = Ar.y(getTileYFromCoord(jugador.y) * Tile.altura + Tile.altura / 2);
-                }
-            }
+            jugador.aplicarReglasDeMovimiento(this);
         }
     }
 
@@ -177,26 +141,10 @@ public class Nivel {
                 iterator.remove();
 
             // Con mejoras
-            for (Iterator<Mejora> iterMejoras = mejoras.iterator(); iterMejoras.hasNext(); ) {
-                Mejora mejora = iterMejoras.next();
-
+            for (Iterator<AbstractMejora> iterMejoras = mejoras.iterator(); iterMejoras.hasNext(); ) {
+                AbstractMejora mejora = iterMejoras.next();
                 if (jugador.colisiona(mejora)) {
-                    // TODO Efecto temporal en vez de permanente?
-                    
-                    switch (mejora.tipo) {
-                        case Mejora.BOMBA:
-                            jugador.bombasLimite++;
-                            break;
-
-                        case Mejora.VELOCIDAD_MOVIMIENTO:
-                            jugador.buffosVelodidad++;
-                            break;
-
-                        case Mejora.EXPLOSION:
-                            jugador.alcanceBombas++;
-                            break;
-                    }
-
+                    mejora.mejorar(jugador);
                     iterMejoras.remove();
                 }
             }
@@ -232,7 +180,7 @@ public class Nivel {
             for (Explosion e : explosiones) {
                 e.dibujar(canvas);
             }
-            for (Mejora m : mejoras) {
+            for (AbstractMejora m : mejoras) {
                 m.dibujar(canvas);
             }
             for (Jugador jugador : jugadores) {
