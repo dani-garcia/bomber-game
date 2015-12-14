@@ -1,5 +1,6 @@
 package com.bombergame;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
@@ -59,10 +60,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         List<Enemigo> enemigos = GestorNiveles.getInstancia().getEnemigos();
         controladores = GestorNiveles.getInstancia().getControladores();
         nivel = new Nivel(context, numeroNivel, mapaTiles, jugadores, enemigos);
+        establecerModoJuego(jugadores);
 
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);
 
+    }
+
+    private void establecerModoJuego(List<Jugador> jugadores) {
+        if(jugadores.size()>1)
+            nivel.modo = nivel.MULTIJUGADOR;
+        else
+            nivel.modo = nivel.INDIVIDUAL;
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -75,13 +84,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         botonBomba.dibujar(canvas);
     }
 
-    public void procesarEventosTouch() {
+    public void procesarEventosTouch() throws Exception {
         boolean pulsacionPadMover = false;
         boolean pulsacionBotonBomba = false;
         for (int i = 0; i < 6; i++) {
             if (accion[i] != NO_ACTION) {
-                if (accion[i] == ACTION_DOWN && nivel.nivelPausado) {
-                    nivel.nivelPausado = false;
+                if (accion[i] == ACTION_DOWN && (nivel.victoria || nivel.derrota)) {
+                    inicializar();
                 }
 
                 if (pad.estaPulsado(x[i], y[i])) {
@@ -160,7 +169,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 break;
         }
 
-        procesarEventosTouch();
+        try {
+            procesarEventosTouch();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -221,7 +234,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         ControladorJugador accion = controladores.get(keyCode);
-        // Log.e("GAMEVIEW", "--- Pulsación tecla:" + keyCode);
         if (accion != null)
             accion.keyDown();
         return super.onKeyUp(keyCode, event);

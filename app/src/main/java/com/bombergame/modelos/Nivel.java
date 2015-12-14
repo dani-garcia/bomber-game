@@ -1,8 +1,12 @@
 package com.bombergame.modelos;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 
+import com.bombergame.GameView;
 import com.bombergame.R;
 import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
@@ -19,8 +23,6 @@ public class Nivel {
     private Tile[][] mapaTiles;
 
     public boolean inicializado;
-
-    public boolean nivelPausado = false;
 
     public List<Bomba> bombas;
     public List<Explosion> explosiones;
@@ -41,6 +43,15 @@ public class Nivel {
     private List<Enemigo> enemigos;
     public List<AbstractMejora> mejoras;
 
+    public boolean victoria = false;
+    public boolean derrota = false;
+    public Bitmap mensajeVictoria;
+    public Bitmap mensajeDerrota;
+
+    public int modo;
+    public static int INDIVIDUAL = 0;
+    public static int MULTIJUGADOR = 1;
+
     public Nivel(Context context, int numeroNivel, Tile[][] mapaTiles, List<Jugador> jugadores, List<Enemigo> enemigos) throws Exception {
         inicializado = false;
 
@@ -58,11 +69,13 @@ public class Nivel {
         bombas = new LinkedList<>();
         explosiones = new LinkedList<>();
         mejoras = new LinkedList<>();
+        mensajeVictoria = CargadorGraficos.cargarBitmap(context, R.drawable.victoria);
+        mensajeDerrota = CargadorGraficos.cargarBitmap(context, R.drawable.derrota);
     }
 
 
     public void actualizar(long tiempo) {
-        if (inicializado) {
+        if (!victoria) {
             for (Jugador jugador : jugadores) {
                 jugador.procesarOrdenes(this);
                 jugador.actualizar(tiempo);
@@ -96,9 +109,7 @@ public class Nivel {
             }
 
             aplicarReglasMovimiento();
-
             comprobarColisiones();
-
             comprobarVictoria();
         }
     }
@@ -163,9 +174,16 @@ public class Nivel {
     }
 
     private void comprobarVictoria() {
-        // TODO Si no quedan enemigos y solo un jugador, ha ganado
-
-        // TODO Si no quedan jugadores, se ha perdido
+        if(modo == MULTIJUGADOR){
+            if(jugadores.size() == 1 && enemigos.size() <= 0)
+                victoria = true;
+        } else if(modo == INDIVIDUAL){
+            if(enemigos.size() <= 0){
+                victoria = true;
+            }
+            if(jugadores.size() < 1)
+                derrota = true;
+        }
     }
 
     public void dibujar(Canvas canvas) {
@@ -189,6 +207,18 @@ public class Nivel {
 
             for (Enemigo enemigo : enemigos) {
                 enemigo.dibujar(canvas);
+            }
+
+            if (victoria || derrota){
+                Rect origen = new Rect(0,0 ,
+                        576,576);
+                Paint efectoTransparente = new Paint();
+                efectoTransparente.setAntiAlias(true);
+                Rect destino = new Rect((int)(GameView.pantallaAncho/2 - 576/2),
+                        (int)(GameView.pantallaAlto/2 - 576/2),
+                        (int)(GameView.pantallaAncho/2 + 576/2),
+                        (int)(GameView.pantallaAlto/2 + 576/2));
+                canvas.drawBitmap(victoria ? mensajeVictoria : mensajeDerrota, origen, destino, null);
             }
         }
     }
