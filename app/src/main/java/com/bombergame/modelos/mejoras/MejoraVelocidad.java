@@ -19,6 +19,6 @@ public class MejoraVelocidad extends AbstractMejora {
 
     @Override
     public void mejorar(Jugador jugador) {
-        jugador.buffosVelodidad++;
+        if ( jugador.buffosVelocidad < jugador.buffosVelocidadMaximos) jugador.buffosVelocidad++;
     }
 }

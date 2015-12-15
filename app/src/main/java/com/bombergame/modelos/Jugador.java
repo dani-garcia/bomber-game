@@ -39,9 +39,10 @@ public class Jugador extends Modelo {
     public int bombasLimite = 1;
     public int bombasColocadas;
     public int alcanceBombas = 1;
-    public int buffosVelodidad = 3;
-    public boolean buffoPateaBombas = true;
-    public boolean buffoExplosionDistanciaBombas = false;
+    public int buffosVelocidad;
+    public int buffosVelocidadMaximos = 2;
+    public boolean buffoPateaBombas;
+    public boolean buffoExplosionDistanciaBombas;
 
     private boolean moverArriba;
     private boolean moverAbajo;
@@ -219,7 +220,7 @@ public class Jugador extends Modelo {
                 int tileY = nivel.getTileYFromCoord(y);
 
                 // Nos movemos con la velocidad
-                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelodidad * 5));
+                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelocidad * 5));
                 aMover -= paso;
 
                 switch (orientacion) {

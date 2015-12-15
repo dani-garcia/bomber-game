@@ -72,7 +72,7 @@ public class Marcador extends Modelo {
                 xOrigenImagen + smallIconsSize, yOrigenImagen + smallIconsSize);
         imagenVelocidad.draw(canvas);
         xOrigenImagen = xOrigenImagen + smallIconsSize + (smallIconsSize / 4);
-        canvas.drawText(String.valueOf(jugador.buffosVelodidad), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
+        canvas.drawText(String.valueOf(jugador.buffosVelocidad), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
 
         xOrigenImagen = xOrigenImagen + smallIconsSize;
         if ( jugador.buffoExplosionDistanciaBombas) {

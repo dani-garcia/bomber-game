@@ -72,7 +72,7 @@ public class Bomba extends Modelo {
     }
 
     public void mover(Nivel nivel) {
-        if (velocidadMovimiento > 0) {
+        if (velocidadMovimiento > 0 && estado == PUESTA) {
             nivel.removeBombaEnTile(this);
 
             int xAxisOffset = 0;
@@ -105,34 +105,36 @@ public class Bomba extends Modelo {
                     .getBombaEnTile(xTileDestino, yTileDestino);
             if (tileDestino.tipoColision == Tile.PASABLE &&
                     bombaTileDestino == null) {
-                x += (velocidadMovimiento * xAxisOffset);
-                y += (velocidadMovimiento * yAxisOffset);
+                Log.e("BOMBA", "Camino libre en Tile: (" + xTile + ", " + yTile + ")");
+                x += velocidadMovimiento * xAxisOffset;
+                y += velocidadMovimiento * yAxisOffset;
             } else {
+                Log.e("BOMBA", "Colision en Tile: (" + xTile + ", " + yTile + ")");
                 double bombaLimit = 0;
                 double nextTileLimit = 0;
                 double distancia = 0;
                 switch (orientacion) {
                     case ARRIBA:
-                        bombaLimit = y - ancho / 2;
-                        nextTileLimit = yTileDestino * Tile.altura + Tile.altura;
+                        bombaLimit = y - Ar.y(altura / 2);
+                        nextTileLimit = Ar.y(yTileDestino * Tile.altura + Tile.altura);
                         distancia = bombaLimit - nextTileLimit;
                         break;
 
                     case ABAJO:
-                        bombaLimit = y + ancho / 2;
-                        nextTileLimit = yTileDestino * Tile.altura;
+                        bombaLimit = y + Ar.y(altura / 2);
+                        nextTileLimit = Ar.y(yTileDestino * Tile.altura);
                         distancia = nextTileLimit - bombaLimit;
                         break;
 
                     case IZQUIERDA:
-                        bombaLimit = x - ancho / 2;
-                        nextTileLimit = xTileDestino * Tile.ancho + Tile.ancho;
+                        bombaLimit = x - Ar.x(ancho / 2);
+                        nextTileLimit = Ar.x(xTileDestino * Tile.ancho + Tile.ancho);
                         distancia = bombaLimit - nextTileLimit;
                         break;
 
                     case DERECHA:
-                        bombaLimit = x + ancho / 2;
-                        nextTileLimit = xTileDestino * Tile.ancho;
+                        bombaLimit = x + Ar.x(ancho / 2);
+                        nextTileLimit = Ar.x(xTileDestino * Tile.ancho);
                         distancia = nextTileLimit - bombaLimit;
                         break;
                 }
@@ -143,11 +145,10 @@ public class Bomba extends Modelo {
                     if (distancia <= velocidadMovimiento)
                         hacerExplotar();
                 } else {
-                    x = xTile * Tile.ancho + Tile.ancho / 2;
-                    y = yTile * Tile.altura + Tile.altura / 2;
+                    x = Ar.x((xTile * Tile.ancho) + Tile.ancho / 2);
+                    y = Ar.y((yTile * Tile.altura) + Tile.altura / 2);
                     hacerExplotar();
                 }
-
             }
         }
     }
@@ -165,7 +166,7 @@ public class Bomba extends Modelo {
         double xCoord = Ar.x((tileX * Tile.ancho) + Tile.ancho / 2);
         double yCoord = Ar.y((tileY * Tile.altura) + Tile.altura / 2);
 
-        Log.e("BOMBA", "Bomba en Tile: (" + tileX + ", " + tileY + "), coords: (" + x + ", " + y +")");
+        Log.e("BOMBA", "Bomba en Tile: (" + tileX + ", " + tileY + "), coords: (" + x + ", " + y + ")");
         nivel.explosiones.add(new Explosion(context, xCoord, yCoord, nivel)); //Esta explosión es donde se pone la bomba, por lo tanto siempre se crea
         generarExplosionesEnEje(tileX, tileY, 1, 0);
         generarExplosionesEnEje(tileX, tileY, -1, 0);
