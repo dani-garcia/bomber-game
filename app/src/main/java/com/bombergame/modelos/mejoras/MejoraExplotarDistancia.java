@@ -14,7 +14,7 @@ public class MejoraExplotarDistancia extends AbstractMejora {
 
     @Override
     protected void setSprite() {
-        sprite = Sprite.create(context, R.drawable.powerup_fire, ancho, altura, 12, 1, true);
+        sprite = Sprite.create(context, R.drawable.powerup_detonacion, ancho, altura, 12, 1, true);
     }
 
     @Override

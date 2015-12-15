@@ -20,6 +20,7 @@ public class Marcador extends Modelo {
     private Drawable imagenFuego;
     private Drawable imagenVelocidad;
     private Drawable imagenPatearBomba;
+    private Drawable imagenExplotarBombas;
 
     public Marcador(Context context, double xIzquierda, double yArriba, Jugador jugador) {
         super(context, xIzquierda, yArriba, 47, 47);
@@ -34,6 +35,8 @@ public class Marcador extends Modelo {
                 R.drawable.powerup_speed);
         this.imagenPatearBomba = CargadorGraficos.cargarDrawable(context,
                 R.drawable.powerup_kick);
+        this.imagenExplotarBombas = CargadorGraficos.cargarDrawable( context,
+                R.drawable.powerup_detonacion);
     }
 
     @Override
@@ -71,12 +74,22 @@ public class Marcador extends Modelo {
         xOrigenImagen = xOrigenImagen + smallIconsSize + (smallIconsSize / 4);
         canvas.drawText(String.valueOf(jugador.buffosVelodidad), xOrigenImagen, yOrigenImagen + (smallIconsSize / 8) * 7, formatoTexto);
 
+        xOrigenImagen = xOrigenImagen + smallIconsSize;
+        if ( jugador.buffoExplosionDistanciaBombas) {
+            xOrigenImagen = xOrigenImagen + smallIconsSize;
+            imagenExplotarBombas.setBounds(xOrigenImagen, yOrigenImagen,
+                    xOrigenImagen + smallIconsSize, yOrigenImagen + smallIconsSize);
+            imagenExplotarBombas.draw(canvas);
+        }
+
+        xOrigenImagen = xOrigenImagen + smallIconsSize;
         if ( jugador.buffoPateaBombas) {
             xOrigenImagen = xOrigenImagen + smallIconsSize;
             imagenPatearBomba.setBounds(xOrigenImagen, yOrigenImagen,
                     xOrigenImagen + smallIconsSize, yOrigenImagen + smallIconsSize);
             imagenPatearBomba.draw(canvas);
         }
+
 
 
     }

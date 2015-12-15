@@ -7,6 +7,7 @@ import android.util.Log;
 import com.bombergame.GameView;
 import com.bombergame.R;
 import com.bombergame.controlesJugador.ControladorJugador;
+import com.bombergame.controlesJugador.ExplotarBombas;
 import com.bombergame.controlesJugador.MoverJugadorAbajo;
 import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.controlesJugador.MoverJugadorDerecha;
@@ -146,6 +147,7 @@ public class GestorNiveles {
                 controladores.put(parser.getInt(item, "derecha"), new MoverJugadorDerecha(jugador));
                 controladores.put(parser.getInt(item, "izquierda"), new MoverJugadorIzquierda(jugador));
                 controladores.put(parser.getInt(item, "ponerbomba"), new PonerBomba(jugador));
+                controladores.put(parser.getInt(item, "detonarbombas"), new ExplotarBombas(jugador));
                 controladores.put(parser.getInt(item, "patearbomba"), new PatearBomba(jugador));
 
             } catch (XPathExpressionException e) {

@@ -6,7 +6,7 @@
         <derecha>32</derecha>
         <izquierda>29</izquierda>
         <ponerbomba>31</ponerbomba>
-        <!--<detonarbombas></detonarbombas>-->
+        <detonarbombas>52</detonarbombas>
         <patearbomba>50</patearbomba>
     </jugador>
     <jugador id="2">
@@ -15,7 +15,7 @@
         <derecha>40</derecha>
         <izquierda>38</izquierda>
         <ponerbomba>42</ponerbomba>
-        <!--<detonarbombas></detonarbombas>-->
+        <detonarbombas>41</detonarbombas>
         <patearbomba>30</patearbomba>
     </jugador>
     <jugador id="3">
@@ -24,7 +24,7 @@
         <derecha>22</derecha>
         <izquierda>21</izquierda>
         <ponerbomba>113</ponerbomba>
-        <!--<detonarbombas></detonarbombas>-->
+        <detonarbombas>73</detonarbombas>
         <patearbomba>59</patearbomba>
     </jugador>
     <jugador id="4">
@@ -33,7 +33,7 @@
         <derecha>150</derecha>
         <izquierda>148</izquierda>
         <ponerbomba>157</ponerbomba>
-        <!--<detonarbombas></detonarbombas>-->
+        <detonarbombas>155</detonarbombas>
         <patearbomba>156</patearbomba>
     </jugador>
 </controles>
