@@ -41,6 +41,7 @@ public class Jugador extends Modelo {
     public int alcanceBombas = 1;
     public int buffosVelodidad = 3;
     public boolean buffoPateaBombas = true;
+    public boolean buffoExplosionDistanciaBombas = false;
 
     private boolean moverArriba;
     private boolean moverAbajo;
@@ -48,6 +49,7 @@ public class Jugador extends Modelo {
     private boolean moverDerecha;
     private boolean ponerBomba;
     private boolean pateaBomba;
+    private boolean explosionDistancia;
 
     private long msInmunidad;
     private int vidas = VIDAS_INICIALES;
@@ -116,6 +118,11 @@ public class Jugador extends Modelo {
                 sprite = sprites.get(CAMINANDO_IZQUIERDA);
                 orientacion = IZQUIERDA;
             }
+        }
+
+        // Explotar todas las bombas del jugador si procede
+        if (buffoExplosionDistanciaBombas && explosionDistancia) {
+            nivel.explotarBombas(this);
         }
 
         // Poner bomba si procede
@@ -315,5 +322,13 @@ public class Jugador extends Modelo {
 
     public void ordenFinPatearBomba() {
        pateaBomba = false;
+    }
+
+    public void ordenExplotarBombas() {
+        explosionDistancia = true;
+    }
+
+    public void ordenFinExplotarBombas() {
+        explosionDistancia = false;
     }
 }
