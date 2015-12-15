@@ -301,5 +301,12 @@ public class Nivel {
     }
 
 
+    public void explotarBombas(Jugador jugador) {
+        for(Bomba b:bombas){
+            if(b.jugador.getId() == jugador.getId())
+                b.tiempoPuesta = 0; //Valor muy lejano a System.currentTimeMillis() para que exploten
+                                    //todas las bombas
+        }
+    }
 }
 

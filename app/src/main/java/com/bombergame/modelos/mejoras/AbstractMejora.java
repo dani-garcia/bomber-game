@@ -16,6 +16,7 @@ public abstract class AbstractMejora extends Modelo{
     public static final int BOMBA = 1;
     public static final int EXPLOSION = 2;
     public static final int VELOCIDAD_MOVIMIENTO = 3;
+    public static final int EXPLOSION_DISTANCIA = 4;
 
     public AbstractMejora(Context context, double x, double y) {
         super(context, x, y, Ar.ancho(58), Ar.alto(58));
