@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 
 public class Modelo {
 
-    public static boolean DEBUG_HITBOX = true;
+    public static boolean DEBUG_HITBOX = false;
 
     public Context context;
     public double x;
