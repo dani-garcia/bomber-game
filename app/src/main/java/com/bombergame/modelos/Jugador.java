@@ -1,4 +1,4 @@
-package com.bombergame.modelos;
+﻿package com.bombergame.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -98,26 +98,48 @@ public class Jugador extends Modelo {
     public void procesarOrdenes(Nivel nivel) {
         // Si no nos estamos moviendo, y nos envian un movimiento, nos movemos
         if (!movimiento) {
+            int tileX = nivel.getTileXFromCoord(x);
+            int tileY = nivel.getTileYFromCoord(y);
+
             if (moverAbajo) {
-                movimiento = true;
-                aMover = Ar.alto(Tile.altura);
                 sprite = sprites.get(CAMINANDO_ABAJO);
                 orientacion = ABAJO;
+
+                if (nivel.getMapaTiles()[tileX][tileY + 1].tipoColision == Tile.PASABLE &&
+                        nivel.getBombaEnTile(tileX, tileY + 1) == null) {
+                    movimiento = true;
+                    aMover = Ar.alto(Tile.altura);
+                }
+
             } else if (moverArriba) {
-                movimiento = true;
-                aMover = Ar.alto(Tile.altura);
                 sprite = sprites.get(CAMINANDO_ARRIBA);
                 orientacion = ARRIBA;
+
+                if (nivel.getMapaTiles()[tileX][tileY - 1].tipoColision == Tile.PASABLE &&
+                        nivel.getBombaEnTile(tileX, tileY - 1) == null) {
+                    movimiento = true;
+                    aMover = Ar.alto(Tile.altura);
+                }
+
             } else if (moverDerecha) {
-                movimiento = true;
-                aMover = Ar.ancho(Tile.ancho);
                 sprite = sprites.get(CAMINANDO_DERECHA);
                 orientacion = DERECHA;
+
+                if (nivel.getMapaTiles()[tileX + 1][tileY].tipoColision == Tile.PASABLE &&
+                        nivel.getBombaEnTile(tileX + 1, tileY) == null) {
+                    movimiento = true;
+                    aMover = Ar.ancho(Tile.ancho);
+                }
+
             } else if (moverIzquierda) {
-                movimiento = true;
-                aMover = Ar.ancho(Tile.ancho);
                 sprite = sprites.get(CAMINANDO_IZQUIERDA);
                 orientacion = IZQUIERDA;
+
+                if (nivel.getMapaTiles()[tileX - 1][tileY].tipoColision == Tile.PASABLE &&
+                        nivel.getBombaEnTile(tileX - 1, tileY) == null) {
+                    movimiento = true;
+                    aMover = Ar.ancho(Tile.ancho);
+                }
             }
         }
 
@@ -168,9 +190,43 @@ public class Jugador extends Modelo {
             Bomba bombaEnFrente = nivel
                     .getBombaEnTile(xTileEnFrente, yTileEnFrente);
 
-            if(bombaEnFrente != null) {
+            if (bombaEnFrente != null) {
                 bombaEnFrente.velocidadMovimiento = bombaEnFrente.velocidadLimite;
                 bombaEnFrente.orientacion = orientacion;
+            }
+        }
+    }
+
+
+    public void aplicarReglasDeMovimiento(Nivel nivel) {
+        if (movimiento) {
+            if (aMover > 0) {
+                // Nos movemos con la velocidad
+                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelodidad * 5));
+                aMover -= paso;
+
+                switch (orientacion) {
+                    case Jugador.ARRIBA:
+                        y -= paso;
+                        break;
+                    case Jugador.ABAJO:
+                        y += paso;
+                        break;
+                    case Jugador.IZQUIERDA:
+                        x -= paso;
+                        break;
+                    case Jugador.DERECHA:
+                        x += paso;
+                        break;
+                }
+
+                // Se acabo el movimiento
+            } else {
+                movimiento = false;
+
+                // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
+                x = Ar.x(nivel.getTileXFromCoord(x) * Tile.ancho + Tile.ancho / 2);
+                y = Ar.y(nivel.getTileYFromCoord(y) * Tile.altura + Tile.altura / 2);
             }
         }
     }
@@ -212,50 +268,6 @@ public class Jugador extends Modelo {
         if (marcador != null) marcador.dibujar(canvas);
     }
 
-
-    public void aplicarReglasDeMovimiento(Nivel nivel) {
-        if (movimiento) {
-            if (aMover > 0) {
-                int tileX = nivel.getTileXFromCoord(x);
-                int tileY = nivel.getTileYFromCoord(y);
-
-                // Nos movemos con la velocidad
-                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelocidad * 5));
-                aMover -= paso;
-
-                switch (orientacion) {
-                    case Jugador.ARRIBA:
-                        if (nivel.getMapaTiles()[tileX][tileY - 1].tipoColision == Tile.PASABLE &&
-                                nivel.getBombaEnTile(tileX, tileY - 1) == null)
-                            y -= paso;
-                        break;
-                    case Jugador.ABAJO:
-                        if (nivel.getMapaTiles()[tileX][tileY + 1].tipoColision == Tile.PASABLE &&
-                                nivel.getBombaEnTile(tileX, tileY + 1) == null)
-                            y += paso;
-                        break;
-                    case Jugador.IZQUIERDA:
-                        if (nivel.getMapaTiles()[tileX - 1][tileY].tipoColision == Tile.PASABLE &&
-                                nivel.getBombaEnTile(tileX - 1, tileY) == null)
-                            x -= paso;
-                        break;
-                    case Jugador.DERECHA:
-                        if (nivel.getMapaTiles()[tileX + 1][tileY].tipoColision == Tile.PASABLE &&
-                                nivel.getBombaEnTile(tileX + 1, tileY) == null)
-                            x += paso;
-                        break;
-                }
-
-                // Se acabo el movimiento
-            } else {
-                movimiento = false;
-
-                // Movemos el jugador a la casilla mas cercana (deberia estar ya ahi, pero por si acaso hay errores de redondeo o lo que sea)
-                x = Ar.x(nivel.getTileXFromCoord(x) * Tile.ancho + Tile.ancho / 2);
-                y = Ar.y(nivel.getTileYFromCoord(y) * Tile.altura + Tile.altura / 2);
-            }
-        }
-    }
 
     public void restablecerPosicionInicial() {
         this.x = xInicial;
@@ -322,7 +334,7 @@ public class Jugador extends Modelo {
     }
 
     public void ordenFinPatearBomba() {
-       pateaBomba = false;
+        pateaBomba = false;
     }
 
     public void ordenExplotarBombas() {

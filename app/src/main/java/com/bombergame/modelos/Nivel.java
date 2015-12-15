@@ -1,12 +1,8 @@
 package com.bombergame.modelos;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 
-import com.bombergame.GameView;
 import com.bombergame.R;
 import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.graficos.Ar;
@@ -47,8 +43,6 @@ public class Nivel {
 
     public boolean victoria = false;
     public boolean derrota = false;
-    public Bitmap mensajeVictoria;
-    public Bitmap mensajeDerrota;
 
     public int modo;
     public static int INDIVIDUAL = 0;
@@ -72,8 +66,6 @@ public class Nivel {
         bombasAux = new Bomba[mapaTiles.length][mapaTiles[0].length];
         explosiones = new LinkedList<>();
         mejoras = new LinkedList<>();
-        mensajeVictoria = CargadorGraficos.cargarBitmap(context, R.drawable.victoria);
-        mensajeDerrota = CargadorGraficos.cargarBitmap(context, R.drawable.derrota);
     }
 
 
@@ -90,21 +82,19 @@ public class Nivel {
 
             for (Iterator<Bomba> iterator = bombas.iterator(); iterator.hasNext(); ) {
                 Bomba bomba = iterator.next();
-                if(bomba.estado != Bomba.INACTIVA)
+                if (bomba.estado != Bomba.INACTIVA)
                     bomba.actualizar(tiempo);
                 else {
                     removeBombaEnTile(bomba);
                     iterator.remove();
-                    continue;
                 }
             }
 
-            for (Iterator<Explosion> iterator = explosiones.iterator(); iterator.hasNext();){
+            for (Iterator<Explosion> iterator = explosiones.iterator(); iterator.hasNext(); ) {
                 Explosion explosion = iterator.next();
 
-                if ( explosion.estado == Explosion.INACTIVA) {
+                if (explosion.estado == Explosion.INACTIVA) {
                     iterator.remove();
-                    continue;
                 } else {
                     explosion.actualizar(tiempo);
                 }
@@ -179,16 +169,14 @@ public class Nivel {
                 Enemigo enemigo = iterator.next();
                 if (enemigo.colisiona(explosion)) {
                     iterator.remove();
-                    continue;
                 }
 
             }
 
-            for( Iterator<AbstractMejora> iterator = mejoras.iterator(); iterator.hasNext();) {
+            for (Iterator<AbstractMejora> iterator = mejoras.iterator(); iterator.hasNext(); ) {
                 AbstractMejora mejora = iterator.next();
-                if(mejora.colisiona(explosion)) {
+                if (mejora.colisiona(explosion)) {
                     iterator.remove();
-                    continue;
                 }
             }
             Bomba bomba = getBombaEnCoords(explosion.x, explosion.y);
@@ -200,14 +188,14 @@ public class Nivel {
     }
 
     private void comprobarVictoria() {
-        if(modo == MULTIJUGADOR){
-            if(jugadores.size() == 1 && enemigos.size() <= 0)
+        if (modo == MULTIJUGADOR) {
+            if (jugadores.size() == 1 && enemigos.size() <= 0)
                 victoria = true;
-        } else if(modo == INDIVIDUAL){
-            if(enemigos.size() <= 0){
+        } else if (modo == INDIVIDUAL) {
+            if (enemigos.size() <= 0) {
                 victoria = true;
             }
-            if(jugadores.size() < 1)
+            if (jugadores.size() < 1)
                 derrota = true;
         }
     }
@@ -233,18 +221,6 @@ public class Nivel {
 
             for (Enemigo enemigo : enemigos) {
                 enemigo.dibujar(canvas);
-            }
-
-            if (victoria || derrota){
-                Rect origen = new Rect(0,0 ,
-                        576,576);
-                Paint efectoTransparente = new Paint();
-                efectoTransparente.setAntiAlias(true);
-                Rect destino = new Rect((int)(GameView.pantallaAncho/2 - 576/2),
-                        (int)(GameView.pantallaAlto/2 - 576/2),
-                        (int)(GameView.pantallaAncho/2 + 576/2),
-                        (int)(GameView.pantallaAlto/2 + 576/2));
-                canvas.drawBitmap(victoria ? mensajeVictoria : mensajeDerrota, origen, destino, null);
             }
         }
     }
@@ -300,12 +276,11 @@ public class Nivel {
         return bombasAux[xTile][yTile];
     }
 
-
     public void explotarBombas(Jugador jugador) {
-        for(Bomba b:bombas){
-            if(b.jugador.getId() == jugador.getId())
+        for (Bomba b : bombas) {
+            if (b.jugador.getId() == jugador.getId())
                 b.tiempoPuesta = 0; //Valor muy lejano a System.currentTimeMillis() para que exploten
-                                    //todas las bombas
+            //todas las bombas
         }
     }
 }
