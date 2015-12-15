@@ -14,9 +14,6 @@ import com.bombergame.modelos.mejoras.MejoraVelocidad;
 
 import java.util.Random;
 
-/**
- * Created by Cristian on 08/12/2015.
- */
 public class Bomba extends Modelo {
 
     private Sprite sprite;
@@ -31,6 +28,14 @@ public class Bomba extends Modelo {
     public int duracionBomba = 3000;
     long tiempoPuesta;
 
+    public double velocidadMovimiento = 0;
+    public double velocidadLimite = 20f;
+
+    public int orientacion;
+    public static final int IZQUIERDA = 1;
+    public static final int DERECHA = 2;
+    public static final int ARRIBA = 3;
+    public static final int ABAJO = 4;
 
     public Bomba(Context context, Jugador jugador, Nivel nivel) {
         super(context, Ar.x(nivel.getTileXFromCoord(jugador.x) * Tile.ancho + Tile.ancho / 2)
@@ -65,10 +70,101 @@ public class Bomba extends Modelo {
             sprite.dibujarSprite(canvas, (int) x, (int) y, false);
     }
 
+    public void mover(Nivel nivel) {
+        if (velocidadMovimiento > 0) {
+            nivel.removeBombaEnTile(this);
+
+            int xAxisOffset = 0;
+            int yAxisOffset = 0;
+            switch (orientacion) {
+                case ARRIBA:
+                    yAxisOffset = -1;
+                    break;
+
+                case ABAJO:
+                    yAxisOffset = 1;
+                    break;
+
+                case IZQUIERDA:
+                    xAxisOffset = -1;
+                    break;
+
+                case DERECHA:
+                    xAxisOffset = 1;
+                    break;
+            }
+            int xTile = nivel.getTileXFromCoord(x);
+            int yTile = nivel.getTileYFromCoord(y);
+            int xTileDestino = xTile + xAxisOffset;
+            int yTileDestino = yTile + yAxisOffset;
+
+            Tile tileDestino = nivel
+                    .getMapaTiles()[xTileDestino][yTileDestino];
+            Bomba bombaTileDestino = nivel
+                    .getBombaEnTile(xTileDestino, yTileDestino);
+            if (tileDestino.tipoColision == Tile.PASABLE &&
+                    bombaTileDestino == null) {
+                x += (velocidadMovimiento * xAxisOffset);
+                y += (velocidadMovimiento * yAxisOffset);
+            } else {
+                double bombaLimit = 0;
+                double nextTileLimit = 0;
+                double distancia = 0;
+                switch (orientacion) {
+                    case ARRIBA:
+                        bombaLimit = y - ancho / 2;
+                        nextTileLimit = yTileDestino * Tile.altura + Tile.altura;
+                        distancia = bombaLimit - nextTileLimit;
+                        break;
+
+                    case ABAJO:
+                        bombaLimit = y + ancho / 2;
+                        nextTileLimit = yTileDestino * Tile.altura;
+                        distancia = nextTileLimit - bombaLimit;
+                        break;
+
+                    case IZQUIERDA:
+                        bombaLimit = x - ancho / 2;
+                        nextTileLimit = xTileDestino * Tile.ancho + Tile.ancho;
+                        distancia = bombaLimit - nextTileLimit;
+                        break;
+
+                    case DERECHA:
+                        bombaLimit = x + ancho / 2;
+                        nextTileLimit = xTileDestino * Tile.ancho;
+                        distancia = nextTileLimit - bombaLimit;
+                        break;
+                }
+
+                if (distancia > 0) {
+                    x += Math.min(distancia, velocidadMovimiento) * xAxisOffset;
+                    y += Math.min(distancia, velocidadMovimiento) * yAxisOffset;
+                    if (distancia <= velocidadMovimiento)
+                        hacerExplotar();
+                } else {
+                    x = xTile * Tile.ancho + Tile.ancho / 2;
+                    y = yTile * Tile.altura + Tile.altura / 2;
+                    hacerExplotar();
+                }
+
+            }
+        }
+    }
+
+    public void hacerExplotar() {
+        tiempoPuesta = System.currentTimeMillis() - duracionBomba;
+        velocidadMovimiento = 0f;
+    }
+
+
     private void generarExplosiones() {
         int tileX = nivel.getTileXFromCoord(x);
         int tileY = nivel.getTileYFromCoord(y);
-        nivel.explosiones.add(new Explosion(context, x, y, nivel)); //Esta explosión es donde se pone la bomba, por lo tanto siempre se crea
+
+        double xCoord = Ar.x((tileX * Tile.ancho) + Tile.ancho / 2);
+        double yCoord = Ar.y((tileY * Tile.altura) + Tile.altura / 2);
+
+        nivel.explosiones.add(new Explosion(context, xCoord, yCoord, nivel)); //Esta explosión es donde se pone la bomba, por lo tanto siempre se crea
         generarExplosionesEnEje(tileX, tileY, 1, 0);
         generarExplosionesEnEje(tileX, tileY, -1, 0);
         generarExplosionesEnEje(tileX, tileY, 0, 1);
@@ -82,17 +178,21 @@ public class Bomba extends Modelo {
         for (int i = 1; i <= jugador.alcanceBombas && muroEncontrado == false; i++) {
             int xTile = xTileOrigen + xAxisOffset * i;
             int yTile = yTileOrigen + yAxisOffset * i;
+
             double xCoord = Ar.x((xTile * Tile.ancho) + Tile.ancho / 2);
             double yCoord = Ar.y((yTile * Tile.altura) + Tile.altura / 2);
-            Log.e("BOMBA", "Comprobando explosión en Tile: (" + xTile + ", " + yTile+ "), coords: (" + xCoord + ", " + yCoord + ")");
+
+            Log.e("BOMBA", "Comprobando explosión en Tile: (" + xTile + ", " + yTile + "), coords: (" + xCoord + ", " + yCoord + ")");
+
             Tile nextTileChecked = nivel.getMapaTiles()[xTile][yTile];
+
             if (nextTileChecked.tipoColision == Tile.PASABLE) {
                 nivel.explosiones.add(new Explosion(context, xCoord, yCoord, nivel));
             } else if (nextTileChecked.tipoColision == Tile.DESTRUIBLE) {
                 muroEncontrado = true;
                 nivel.getMapaTiles()[xTile][yTile] = Tile.VACIO;
                 generarMejora(xCoord, yCoord);
-            } else {
+            } else if (nextTileChecked.tipoColision == Tile.SOLIDO) {
                 muroEncontrado = true;
             }
         }

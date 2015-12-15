@@ -118,6 +118,7 @@ public class Jugador extends Modelo {
             }
         }
 
+        // Poner bomba si procede
         if (ponerBomba) {
             ponerBomba = false;
 
@@ -127,6 +128,41 @@ public class Jugador extends Modelo {
                     nivel.bombas.add(b);
                     nivel.addBombaEnTile(b);
                 }
+            }
+        }
+
+        // Patear bomba si procede
+        if (buffoPateaBombas && pateaBomba) {
+
+            int xAxisOffset = 0;
+            int yAxisOffset = 0;
+            switch (orientacion) {
+                case ARRIBA:
+                    yAxisOffset = -1;
+                    break;
+
+                case ABAJO:
+                    yAxisOffset = 1;
+                    break;
+
+                case IZQUIERDA:
+                    xAxisOffset = -1;
+                    break;
+
+                case DERECHA:
+                    xAxisOffset = 1;
+                    break;
+            }
+            int xTile = nivel.getTileXFromCoord(x);
+            int yTile = nivel.getTileYFromCoord(y);
+            int xTileEnFrente = xTile + xAxisOffset;
+            int yTileEnFrente = yTile + yAxisOffset;
+            Bomba bombaEnFrente = nivel
+                    .getBombaEnTile(xTileEnFrente, yTileEnFrente);
+
+            if(bombaEnFrente != null) {
+                bombaEnFrente.velocidadMovimiento = bombaEnFrente.velocidadLimite;
+                bombaEnFrente.orientacion = orientacion;
             }
         }
     }

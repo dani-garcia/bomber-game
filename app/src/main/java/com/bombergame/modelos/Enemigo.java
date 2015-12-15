@@ -50,6 +50,8 @@ public class Enemigo extends Modelo {
 
         sprites.put(CAMINANDO_ARRIBA, Sprite.create(context, R.drawable.enemy_up, ancho, altura, 10, 6, true));
         sprites.put(CAMINANDO_ABAJO, Sprite.create(context, R.drawable.enemy_down, ancho, altura, 10, 6, true));
+
+        sprite = sprites.get(CAMINANDO_ABAJO);
     }
 
     @Override

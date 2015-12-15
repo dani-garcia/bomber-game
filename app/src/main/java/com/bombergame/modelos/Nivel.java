@@ -85,7 +85,6 @@ public class Nivel {
             }
 
             for (Enemigo enemigo : enemigos) {
-                enemigo.mover(this);
                 enemigo.actualizar(tiempo);
             }
 
@@ -130,6 +129,16 @@ public class Nivel {
         for (Jugador jugador : jugadores) {
             jugador.aplicarReglasDeMovimiento(this);
         }
+
+        for (Enemigo enemigo : enemigos) {
+            enemigo.mover(this);
+        }
+
+        for (Bomba bomba : bombas) {
+            bomba.mover(this);
+        }
+
+
     }
 
     private void comprobarColisiones() {
@@ -184,19 +193,9 @@ public class Nivel {
             }
             Bomba bomba = getBombaEnCoords(explosion.x, explosion.y);
             if (bomba != null) {
-                bomba.tiempoPuesta = System.currentTimeMillis() - bomba.duracionBomba;
+                bomba.hacerExplotar();
             }
 
-        }
-        for (Iterator<Enemigo> iterator = enemigos.iterator(); iterator.hasNext(); ) {
-            Enemigo enemigo = iterator.next();
-
-            for (Explosion explosion : explosiones) {
-                if (enemigo.colisiona(explosion)) {
-                    iterator.remove();
-                    break;
-                }
-            }
         }
     }
 
