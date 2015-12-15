@@ -9,6 +9,7 @@ import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
 import com.bombergame.modelos.mejoras.MejoraBomba;
 import com.bombergame.modelos.mejoras.MejoraExplosion;
+import com.bombergame.modelos.mejoras.MejoraExplotarDistancia;
 import com.bombergame.modelos.mejoras.MejoraLanzaBombas;
 import com.bombergame.modelos.mejoras.MejoraVelocidad;
 
@@ -26,7 +27,7 @@ public class Bomba extends Modelo {
     public int estado;
     public Nivel nivel;
     public int duracionBomba = 3000;
-    long tiempoPuesta;
+    public long tiempoPuesta;
 
     public double velocidadMovimiento = 0;
     public double velocidadLimite = 20f;
@@ -214,6 +215,9 @@ public class Bomba extends Modelo {
                 break;
             case 3:
                 nivel.mejoras.add(new MejoraLanzaBombas(context, x, y));
+                break;
+            case 4:
+                nivel.mejoras.add(new MejoraExplotarDistancia(context, x, y));
                 break;
         }
     }
