@@ -234,6 +234,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         ControladorJugador accion = controladores.get(keyCode);
+        Log.e("GAMEVIEW", "Botón pulsado: " + keyCode + " " + KeyEvent.keyCodeToString(keyCode));
         if (accion != null)
             accion.keyDown();
         return super.onKeyUp(keyCode, event);

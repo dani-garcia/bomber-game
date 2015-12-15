@@ -9,6 +9,7 @@ import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
 import com.bombergame.modelos.mejoras.MejoraBomba;
 import com.bombergame.modelos.mejoras.MejoraExplosion;
+import com.bombergame.modelos.mejoras.MejoraLanzaBombas;
 import com.bombergame.modelos.mejoras.MejoraVelocidad;
 
 import java.util.Random;
@@ -110,6 +111,9 @@ public class Bomba extends Modelo {
                 break;
             case 2:
                 nivel.mejoras.add(new MejoraVelocidad(context, x, y));
+                break;
+            case 3:
+                nivel.mejoras.add(new MejoraLanzaBombas(context, x, y));
                 break;
         }
     }

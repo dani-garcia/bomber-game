@@ -11,6 +11,7 @@ import com.bombergame.controlesJugador.MoverJugadorAbajo;
 import com.bombergame.controlesJugador.MoverJugadorArriba;
 import com.bombergame.controlesJugador.MoverJugadorDerecha;
 import com.bombergame.controlesJugador.MoverJugadorIzquierda;
+import com.bombergame.controlesJugador.PatearBomba;
 import com.bombergame.controlesJugador.PonerBomba;
 import com.bombergame.graficos.Ar;
 import com.bombergame.modelos.Enemigo;
@@ -99,9 +100,9 @@ public class GestorNiveles {
     public void cargarDatosNivel(Context context) {
         posicionesMarcadores = new double [][] {
                 {GameView.pantallaAncho * 0.02, GameView.pantallaAlto * 0.01},
-                {GameView.pantallaAncho * 0.80, GameView.pantallaAlto * 0.01},
+                {GameView.pantallaAncho * 0.75, GameView.pantallaAlto * 0.01},
                 {GameView.pantallaAncho * 0.01, GameView.pantallaAlto * 0.93},
-                {GameView.pantallaAncho * 0.80, GameView.pantallaAlto * 0.93}
+                {GameView.pantallaAncho * 0.75, GameView.pantallaAlto * 0.93}
         };
 
         jugadores = new LinkedList<>();
@@ -145,6 +146,7 @@ public class GestorNiveles {
                 controladores.put(parser.getInt(item, "derecha"), new MoverJugadorDerecha(jugador));
                 controladores.put(parser.getInt(item, "izquierda"), new MoverJugadorIzquierda(jugador));
                 controladores.put(parser.getInt(item, "ponerbomba"), new PonerBomba(jugador));
+                controladores.put(parser.getInt(item, "patearbomba"), new PatearBomba(jugador));
 
             } catch (XPathExpressionException e) {
                 Log.e("GESTOR_NIVELES", e.getMessage());

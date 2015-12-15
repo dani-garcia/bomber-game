@@ -35,16 +35,19 @@ public class Jugador extends Modelo {
     public double aMover;
     public boolean movimiento;
 
+    // Indicadores de buffos
     public int bombasLimite = 1;
     public int bombasColocadas;
     public int alcanceBombas = 1;
     public int buffosVelodidad;
+    public boolean buffoPateaBombas = false;
 
     private boolean moverArriba;
     private boolean moverAbajo;
     private boolean moverIzquierda;
     private boolean moverDerecha;
     private boolean ponerBomba;
+    private boolean pateaBomba;
 
     private long msInmunidad;
     private int vidas = VIDAS_INICIALES;
@@ -268,5 +271,13 @@ public class Jugador extends Modelo {
 
     public void ordenFinPonerBomba() {
         ponerBomba = false;
+    }
+
+    public void ordenPatearBomba() {
+        pateaBomba = true;
+    }
+
+    public void ordenFinPatearBomba() {
+       pateaBomba = false;
     }
 }
