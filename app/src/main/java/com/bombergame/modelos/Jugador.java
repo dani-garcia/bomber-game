@@ -1,4 +1,4 @@
-﻿package com.bombergame.modelos;
+package com.bombergame.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -202,7 +202,7 @@ public class Jugador extends Modelo {
         if (movimiento) {
             if (aMover > 0) {
                 // Nos movemos con la velocidad
-                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelodidad * 5));
+                double paso = Math.min(aMover, velocidadMovimiento + (buffosVelocidad * 5));
                 aMover -= paso;
 
                 switch (orientacion) {
