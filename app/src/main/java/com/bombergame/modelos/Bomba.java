@@ -202,7 +202,7 @@ public class Bomba extends Modelo {
 
     private void generarMejora(double x, double y) {
         Random r = new Random();
-        int probabilidadNoMejora = 8; //A MAYOR probabilidad MENOR probabilidad hay de que al destruir un bloque salga una mejora
+        int probabilidadNoMejora = 9; //A MAYOR probabilidad MENOR probabilidad hay de que al destruir un bloque salga una mejora
         int n = r.nextInt(probabilidadNoMejora);
         switch (n) {
             case 0:
