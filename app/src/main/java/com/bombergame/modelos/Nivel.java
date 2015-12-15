@@ -206,15 +206,18 @@ public class Nivel {
 
             dibujarTiles(canvas);
 
-            for (Bomba b : bombas) {
-                b.dibujar(canvas);
-            }
             for (Explosion e : explosiones) {
                 e.dibujar(canvas);
             }
+
             for (AbstractMejora m : mejoras) {
                 m.dibujar(canvas);
             }
+
+            for (Bomba b : bombas) {
+                b.dibujar(canvas);
+            }
+
             for (Jugador jugador : jugadores) {
                 jugador.dibujar(canvas);
             }
