@@ -1,8 +1,9 @@
 package com.bombergame;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.bombergame.controlesJugador.ControladorJugador;
+import com.bombergame.gestores.CargadorGraficos;
 import com.bombergame.gestores.GestorNiveles;
 import com.bombergame.modelos.Enemigo;
 import com.bombergame.modelos.Jugador;
@@ -34,6 +36,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Nivel nivel;
     public int numeroNivel;
+
+    public Bitmap mensajeVictoria;
+    public Bitmap mensajeDerrota;
 
     private Pad pad;
     private BotonBomba botonBomba;
@@ -65,13 +70,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         pad = new Pad(context);
         botonBomba = new BotonBomba(context);
 
+        mensajeVictoria = CargadorGraficos.cargarBitmap(context, R.drawable.victoria);
+        mensajeDerrota = CargadorGraficos.cargarBitmap(context, R.drawable.derrota);
     }
 
     private void establecerModoJuego(List<Jugador> jugadores) {
-        if(jugadores.size()>1)
-            nivel.modo = nivel.MULTIJUGADOR;
+        if (jugadores.size() > 1)
+            nivel.modo = Nivel.MULTIJUGADOR;
         else
-            nivel.modo = nivel.INDIVIDUAL;
+            nivel.modo = Nivel.INDIVIDUAL;
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -82,6 +89,29 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         nivel.dibujar(canvas);
         pad.dibujar(canvas);
         botonBomba.dibujar(canvas);
+
+        dibujarPantallaVictoriaDerrota(canvas);
+    }
+
+    private void dibujarPantallaVictoriaDerrota(Canvas canvas) {
+        if (nivel.victoria || nivel.derrota) {
+            int width = mensajeVictoria.getWidth();
+            int height = mensajeVictoria.getHeight();
+
+            float factorX = GameView.pantallaAncho / (float) width;
+            float factorY = GameView.pantallaAlto / (float) height;
+
+            float factorMenor = Math.min(factorX, factorY);
+            int widthFactored = (int) (height * factorMenor);
+            int heightFactored = (int) (height * factorMenor);
+
+            Rect origen = new Rect(0, 0, width, height);
+            Rect destino = new Rect(GameView.pantallaAncho / 2 - widthFactored / 2,
+                    GameView.pantallaAlto / 2 - heightFactored / 2,
+                    GameView.pantallaAncho / 2 + widthFactored / 2,
+                    GameView.pantallaAlto / 2 + heightFactored / 2);
+            canvas.drawBitmap(nivel.victoria ? mensajeVictoria : mensajeDerrota, origen, destino, null);
+        }
     }
 
     public void procesarEventosTouch() throws Exception {
