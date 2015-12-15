@@ -273,7 +273,11 @@ public class Jugador extends Modelo {
         this.x = xInicial;
         this.y = yInicial;
 
-        sprite = sprites.get(CAMINANDO_DERECHA);
+        movimiento = false;
+        aMover = 0;
+        orientacion = ABAJO;
+
+        sprite = sprites.get(CAMINANDO_ABAJO);
     }
 
     public void ordenMovimientoAbajo() {
