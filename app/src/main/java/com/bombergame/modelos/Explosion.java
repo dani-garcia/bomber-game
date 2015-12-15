@@ -19,7 +19,7 @@ public class Explosion extends Modelo {
 
     private Sprite sprite;
 
-    public static long tiempoExplosion = 3000;
+    public static long tiempoExplosion = 500;
     public int estado;
     public static int EXPLOTANDO = 0;
     public static int INACTIVA = 1;

@@ -164,6 +164,7 @@ public class Bomba extends Modelo {
         double xCoord = Ar.x((tileX * Tile.ancho) + Tile.ancho / 2);
         double yCoord = Ar.y((tileY * Tile.altura) + Tile.altura / 2);
 
+        Log.e("BOMBA", "Bomba en Tile: (" + tileX + ", " + tileY + "), coords: (" + x + ", " + y +")");
         nivel.explosiones.add(new Explosion(context, xCoord, yCoord, nivel)); //Esta explosión es donde se pone la bomba, por lo tanto siempre se crea
         generarExplosionesEnEje(tileX, tileY, 1, 0);
         generarExplosionesEnEje(tileX, tileY, -1, 0);
@@ -175,7 +176,7 @@ public class Bomba extends Modelo {
     private void generarExplosionesEnEje(int xTileOrigen, int yTileOrigen, int xAxisOffset, int yAxisOffset) {
         boolean muroEncontrado = false;
 
-        for (int i = 1; i <= jugador.alcanceBombas && muroEncontrado == false; i++) {
+        for (int i = 1; i <= jugador.alcanceBombas && !muroEncontrado; i++) {
             int xTile = xTileOrigen + xAxisOffset * i;
             int yTile = yTileOrigen + yAxisOffset * i;
 
