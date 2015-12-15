@@ -87,8 +87,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     protected void dibujar(Canvas canvas) {
         nivel.dibujar(canvas);
-        pad.dibujar(canvas);
-        botonBomba.dibujar(canvas);
+        if(nivel.modo == nivel.INDIVIDUAL){
+            pad.dibujar(canvas);
+            botonBomba.dibujar(canvas);
+        }
+
 
         dibujarPantallaVictoriaDerrota(canvas);
     }
@@ -102,8 +105,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             float factorY = GameView.pantallaAlto / (float) height;
 
             float factorMenor = Math.min(factorX, factorY);
-            int widthFactored = (int) (height * factorMenor);
-            int heightFactored = (int) (height * factorMenor);
+            int widthFactored = (int) (height * factorMenor) - 150;
+            int heightFactored = (int) (height * factorMenor) - 150;
 
             Rect origen = new Rect(0, 0, width, height);
             Rect destino = new Rect(GameView.pantallaAncho / 2 - widthFactored / 2,

@@ -10,7 +10,7 @@ import com.bombergame.modelos.Modelo;
 public class Pad extends Modelo {
 
     public Pad(Context context) {
-        super(context, GameView.pantallaAncho * 0.15, GameView.pantallaAlto * 0.75,
+        super(context, GameView.pantallaAncho * 0.10, GameView.pantallaAlto * 0.75,
                 (int) (GameView.pantallaAncho * 0.20), (int) (GameView.pantallaAncho * 0.20));
 
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.pad);
