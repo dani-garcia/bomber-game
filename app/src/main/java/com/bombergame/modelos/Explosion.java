@@ -6,11 +6,6 @@ import android.graphics.Canvas;
 import com.bombergame.R;
 import com.bombergame.graficos.Ar;
 import com.bombergame.graficos.Sprite;
-import com.bombergame.modelos.mejoras.MejoraBomba;
-import com.bombergame.modelos.mejoras.MejoraExplosion;
-import com.bombergame.modelos.mejoras.MejoraVelocidad;
-
-import java.util.Random;
 
 /**
  * Created by Cristian on 09/12/2015.
@@ -23,7 +18,6 @@ public class Explosion extends Modelo {
     public int estado;
     public static int EXPLOTANDO = 0;
     public static int INACTIVA = 1;
-//    public static int EXPLOTANDO_DESTRUIBLE = 2;
     private long tiempoFuego;
     private Nivel nivel;
 
@@ -44,9 +38,7 @@ public class Explosion extends Modelo {
             estado = INACTIVA;
         }
     }
-
-
-
+    
     @Override
     protected void doDibujar(Canvas canvas) {
         if (estado != INACTIVA)
