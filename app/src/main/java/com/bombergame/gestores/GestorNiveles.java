@@ -194,6 +194,8 @@ public class GestorNiveles {
     }
 
     private Tile inicializarTile(Context context, char codigoTile, int x, int y) {
+        Tile.VACIO = new Tile(CargadorGraficos.cargarDrawable(context,
+                R.drawable.tile_empty), Tile.PASABLE);
 
         switch (codigoTile) {
             case '1':

@@ -13,7 +13,7 @@ public class Tile {
     /**
      * Para no tener que crear un tile vacio cada vez
      */
-    public static final Tile VACIO = new Tile(null, PASABLE);
+    public static Tile VACIO = new Tile(null, PASABLE);
 
     public int tipoColision; // PASABLE o SOLIDO
 
